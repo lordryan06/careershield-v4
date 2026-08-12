@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="description" content="Compare college, apprenticeships, technical training, certifications, and military career paths on money, time, demand, resilience, and flexibility.">
+  <title>CareerShield V4 — Compare every path forward</title>
+  <link rel="stylesheet" href="styles.css"><script src="app.js" defer></script>
+</head>
+<body>
+  <header class="nav"><a class="brand" href="#">Career<span>Shield</span></a><span>Career decision intelligence</span></header>
+  <main>
+    <section class="hero"><div class="eyebrow">COLLEGE IS ONE PATH. COMPARE THEM ALL.</div><h1>What’s your strongest path forward?</h1><p>Compare college, skilled trades, technical training, and military routes with one transparent, risk-adjusted score.</p><div class="hero-proof"><span>Live federal data</span><span>6 decision factors</span><span>Up to 4 paths</span></div></section>
+    <div class="shell">
+      <section class="panel builder" aria-labelledby="builder-title">
+        <div class="step">STEP 1 · CHOOSE A ROUTE</div><h2 id="builder-title">Build a path to compare</h2>
+        <p class="muted">Start with a route, then use your real costs and timeline. Labor-market results come from O*NET; college results also use College Scorecard.</p>
+        <div id="pathPicker" class="path-picker" role="radiogroup" aria-label="Career path type">
+          <button type="button" class="path-choice active" data-path="college" role="radio" aria-checked="true"><span class="path-icon">C</span><strong>College</strong><small>2- or 4-year degree</small></button>
+          <button type="button" class="path-choice" data-path="trade" role="radio" aria-checked="false"><span class="path-icon">T</span><strong>Skilled trade</strong><small>Paid apprenticeship</small></button>
+          <button type="button" class="path-choice" data-path="training" role="radio" aria-checked="false"><span class="path-icon">✓</span><strong>Certification</strong><small>Technical training</small></button>
+          <button type="button" class="path-choice" data-path="military" role="radio" aria-checked="false"><span class="path-icon">★</span><strong>Military</strong><small>Service + career skills</small></button>
+        </div>
+        <div class="grid two">
+          <div id="schoolField" class="field searchbox"><label for="schoolSearch">School</label><input id="schoolSearch" autocomplete="off" placeholder="Try University of Hawaii"><div id="schoolResults" class="results" hidden></div><div id="schoolSelected" class="selection" hidden></div></div>
+          <div id="providerField" class="field" hidden><label id="providerLabel" for="provider">Program or provider</label><input id="provider" placeholder="e.g. IBEW Local 48"><small id="providerHint">Optional — name the apprenticeship or employer.</small></div>
+          <div class="field searchbox"><label id="careerLabel" for="careerSearch">Intended career</label><input id="careerSearch" autocomplete="off" placeholder="Try registered nurse"><div id="careerResults" class="results" hidden></div><div id="careerSelected" class="selection" hidden></div></div>
+          <div class="field"><label id="costLabel" for="cost">Estimated total cost</label><div class="money"><span>$</span><input id="cost" type="number" min="0" step="500" placeholder="80000"></div><small id="costHint">Tuition, fees, and required materials before grants.</small></div>
+          <div class="field"><label id="aidLabel" for="grants">Scholarships and grants</label><div class="money"><span>$</span><input id="grants" type="number" min="0" step="500" value="0"></div><small id="aidHint">Funding you do not expect to repay.</small></div>
+          <div class="field"><label for="debt">Expected debt</label><div class="money"><span>$</span><input id="debt" type="number" min="0" step="500" placeholder="40000"></div><small>Borrowing you expect when training is complete.</small></div>
+          <div class="field"><label for="duration">Months until full-time earnings</label><input id="duration" type="number" min="0" max="120" value="48"><small id="durationHint">Time before entering the target career full time.</small></div>
+          <div class="field"><label for="earnWhile">Annual earnings while training</label><div class="money"><span>$</span><input id="earnWhile" type="number" min="0" step="1000" value="0"></div><small>Wages or taxable pay earned during the path.</small></div>
+          <div class="field"><label for="startingPay">Expected first-year pay</label><div class="money"><span>$</span><input id="startingPay" type="number" min="0" step="1000" placeholder="Auto-filled from career data"></div><small>Optional. Leave blank to estimate from the O*NET median.</small></div>
+        </div>
+        <div id="formMessage" class="message" aria-live="polite"></div><button id="addOption" class="primary">Score this path</button>
+      </section>
+      <section id="featured" class="featured" hidden></section>
+      <section class="comparison" aria-labelledby="compare-title">
+        <div class="section-head"><div><div class="step">STEP 2 · COMPARE THE TRADEOFFS</div><h2 id="compare-title">Your ranked paths</h2><p class="section-note">Ranked by expected financial outcome, speed, cost, demand, AI resilience, and flexibility.</p></div><button id="clearAll" class="text-button" hidden>Clear comparison</button></div>
+        <div id="emptyState" class="empty"><strong>No paths scored yet.</strong><span>Add up to four routes. Mix college, trades, certifications, and military options in one comparison.</span></div><div id="comparisonGrid" class="comparison-grid"></div>
+      </section>
+      <section id="interest" class="interest panel" aria-labelledby="interest-title">
+        <div class="interest-copy"><div class="step">TAKE THE NEXT STEP</div><h2 id="interest-title">Want a detailed report or future protection updates?</h2><p>Tell us what would be useful. We’ll contact you about CareerShield reports, product research, or future protection availability—never to confirm coverage.</p><div class="privacy-note">Your email is used only to respond to this request. Do not submit Social Security numbers, financial account details, or other sensitive information.</div></div>
+        <form id="interestForm" name="careershield-interest" method="POST" data-netlify="true" data-netlify-honeypot="bot-field"><input type="hidden" name="form-name" value="careershield-interest"><p class="honeypot"><label>Leave this empty: <input name="bot-field"></label></p><div class="grid two compact"><div class="field"><label for="leadName">Name</label><input id="leadName" name="name" required autocomplete="name" placeholder="Your name"></div><div class="field"><label for="leadEmail">Email</label><input id="leadEmail" name="email" type="email" required autocomplete="email" placeholder="you@example.com"></div></div><div class="field interest-field"><label for="leadInterest">I’m interested in</label><select id="leadInterest" name="interest" required><option value="">Choose one</option><option>Detailed CareerShield report</option><option>Future CareerShield Protection updates</option><option>Both a report and protection updates</option><option>Testing or giving feedback</option></select></div><div class="field interest-field"><label for="leadMessage">What decision are you considering? <span>(optional)</span></label><textarea id="leadMessage" name="message" rows="3" placeholder="For example: comparing nursing school with military medical training"></textarea></div><label class="consent"><input type="checkbox" name="consent" value="yes" required><span>I agree that CareerShield may contact me about this request. I understand that CareerShield is a prototype and this is not an insurance application, offer, quote, or guarantee of coverage.</span></label><button id="interestSubmit" class="primary" type="submit">Send my interest</button><div id="interestStatus" class="form-status" role="status" aria-live="polite"></div></form>
+      </section>
+      <section class="method panel"><div><div class="step">HOW V4 RANKS PATHS</div><h2>One score. Six visible factors.</h2></div><div><div class="weight-grid"><span>Financial outcome <b>28%</b></span><span>Time to earnings <b>17%</b></span><span>Debt &amp; upfront cost <b>18%</b></span><span>Employment demand <b>15%</b></span><span>AI resilience <b>12%</b></span><span>Career flexibility <b>10%</b></span></div><p>CareerShield combines your inputs with public labor-market and education data. Estimates are directional, missing data is scored neutrally, and results are decision support—not financial advice, an insurance offer, or a guarantee.</p></div></section>
+    </div>
+  </main>
+  <footer><span>CareerShield V4 prototype</span><span>College data: U.S. Department of Education College Scorecard · Career data: O*NET Web Services by the U.S. Department of Labor</span></footer>
+</body></html>
