@@ -23,7 +23,23 @@ export default async (request) => {
 
   const code = params.get("code")?.trim();
   const search = params.get("search")?.trim();
+  const military = params.get("military")?.trim();
+  const branch = params.get("branch")?.trim() || "all";
+  const track = params.get("track")?.trim() || "all";
   try {
+    if (military) {
+      if (military.length < 2 || military.length > 100) return json({ error: "Enter a military job search from 2 to 100 characters." }, 400);
+      const branches = ["all", "air_force", "army", "coast_guard", "marine_corps", "navy", "space_force"];
+      if (!branches.includes(branch)) return json({ error: "Choose a valid service branch." }, 400);
+      const data = await onet(`/online/crosswalks/military?keyword=${encodeURIComponent(military)}&branch=${encodeURIComponent(branch)}&active=true&start=1&end=40`, apiKey);
+      const trackPattern = track === "enlisted" ? /enlisted/i : track === "commissioned" ? /commissioned officer/i : track === "warrant" ? /warrant officer/i : null;
+      const results = list(data.match).filter(item => !trackPattern || trackPattern.test(item.title || "")).map(item => ({
+        code: item.code,
+        title: item.title,
+        occupations: list(item.occupation).map(o => ({ code: o.code, name: o.title, brightOutlook: Boolean(o.tags?.bright_outlook) }))
+      }));
+      return json({ results, total: results.length });
+    }
     if (search) {
       if (search.length < 2 || search.length > 100) return json({ error: "Enter a search from 2 to 100 characters." }, 400);
       const data = await onet(`/online/search?keyword=${encodeURIComponent(search)}&start=1&end=12`, apiKey);
