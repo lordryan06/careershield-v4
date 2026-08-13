@@ -1,6 +1,6 @@
 const SCORECARD_URL = "https://api.data.gov/ed/collegescorecard/v1/schools.json";
 const FIELDS = [
-  "id", "school.name", "school.city", "school.state", "school.ownership",
+  "id", "school.name", "school.city", "school.state", "school.ownership", "school.school_url",
   "latest.cost.tuition.in_state", "latest.cost.tuition.out_of_state",
   "latest.cost.avg_net_price.overall", "latest.aid.median_debt.completers.overall",
   "latest.earnings.10_yrs_after_entry.median", "latest.completion.rate_suppressed.overall"
@@ -37,4 +37,3 @@ export default async (request) => {
 };
 
 export const config = { path: "/api/schools", method: "GET" };
-
