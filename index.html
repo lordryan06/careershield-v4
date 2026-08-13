@@ -42,12 +42,28 @@
             <div id="militaryCompSummary" class="comp-summary" aria-live="polite"></div>
           </div>
           <div id="careerField" class="field searchbox"><label id="careerLabel" for="careerSearch">Intended career</label><input id="careerSearch" autocomplete="off" placeholder="Try registered nurse"><div id="careerResults" class="results" hidden></div><div id="careerSelected" class="selection" hidden></div></div>
-          <div class="field"><label id="costLabel" for="cost">Estimated total cost</label><div class="money"><span>$</span><input id="cost" type="number" min="0" step="500" placeholder="80000"></div><small id="costHint">Tuition, fees, and required materials before grants.</small></div>
-          <div class="field"><label id="aidLabel" for="grants">Scholarships and grants</label><div class="money"><span>$</span><input id="grants" type="number" min="0" step="500" value="0"></div><small id="aidHint">Funding you do not expect to repay.</small></div>
+          <div id="tradeEconomics" class="military-comp trade-economics wide" hidden>
+            <div class="comp-head"><div><strong>Apprenticeship earnings and costs</strong><span>Model progressive wages from entry through journey level.</span></div><span class="year-badge">Editable assumptions</span></div>
+            <div class="grid three">
+              <div class="field"><label for="tradeStartWage">Starting hourly wage</label><div class="money"><span>$</span><input id="tradeStartWage" type="number" min="0" step=".25" value="20"></div></div>
+              <div class="field"><label for="tradeJourneyWage">Journey-level hourly wage</label><div class="money"><span>$</span><input id="tradeJourneyWage" type="number" min="0" step=".25" value="40"></div><small>Use the fully proficient wage from the program.</small></div>
+              <div class="field"><label for="tradeProgramMonths">Program length</label><div class="suffix"><input id="tradeProgramMonths" type="number" min="1" max="120" value="48"><span>months</span></div></div>
+              <div class="field"><label for="tradeRaises">Wage steps during program</label><input id="tradeRaises" type="number" min="1" max="12" value="4"><small>Equal steps from entry to journey wage.</small></div>
+              <div class="field"><label for="tradeHoursWeek">Paid hours per week</label><input id="tradeHoursWeek" type="number" min="1" max="80" value="40"></div>
+              <div class="field"><label for="tradeWeeksYear">Paid weeks per year</label><input id="tradeWeeksYear" type="number" min="1" max="52" value="50"></div>
+              <div class="field"><label for="tradeToolsCost">Tools and equipment</label><div class="money"><span>$</span><input id="tradeToolsCost" type="number" min="0" step="100" value="2500"></div></div>
+              <div class="field"><label for="tradeClassCost">Classroom and program fees</label><div class="money"><span>$</span><input id="tradeClassCost" type="number" min="0" step="100" value="2000"></div></div>
+              <div class="field"><label for="tradeLicenseCost">Licensing and exam costs</label><div class="money"><span>$</span><input id="tradeLicenseCost" type="number" min="0" step="50" value="500"></div></div>
+              <div class="field"><label for="tradeSupport">Employer, union, or grant support</label><div class="money"><span>$</span><input id="tradeSupport" type="number" min="0" step="100" value="0"></div></div>
+            </div>
+            <div id="tradeSummary" class="comp-summary" aria-live="polite"></div>
+          </div>
+          <div id="costField" class="field"><label id="costLabel" for="cost">Estimated total cost</label><div class="money"><span>$</span><input id="cost" type="number" min="0" step="500" placeholder="80000"></div><small id="costHint">Tuition, fees, and required materials before grants.</small></div>
+          <div id="aidField" class="field"><label id="aidLabel" for="grants">Scholarships and grants</label><div class="money"><span>$</span><input id="grants" type="number" min="0" step="500" value="0"></div><small id="aidHint">Funding you do not expect to repay.</small></div>
           <div class="field"><label for="debt">Expected debt</label><div class="money"><span>$</span><input id="debt" type="number" min="0" step="500" placeholder="40000"></div><small>Borrowing you expect when training is complete.</small></div>
-          <div class="field"><label for="duration">Months until full-time earnings</label><input id="duration" type="number" min="0" max="120" value="48"><small id="durationHint">Time before entering the target career full time.</small></div>
-          <div class="field"><label for="earnWhile">Annual earnings while training</label><div class="money"><span>$</span><input id="earnWhile" type="number" min="0" step="1000" value="0"></div><small>Wages or taxable pay earned during the path.</small></div>
-          <div class="field"><label for="startingPay">Expected first-year pay</label><div class="money"><span>$</span><input id="startingPay" type="number" min="0" step="1000" placeholder="Auto-filled from career data"></div><small>Optional. Leave blank to estimate from the O*NET median.</small></div>
+          <div id="durationField" class="field"><label for="duration">Months until full-time earnings</label><input id="duration" type="number" min="0" max="120" value="48"><small id="durationHint">Time before entering the target career full time.</small></div>
+          <div id="earnWhileField" class="field"><label for="earnWhile">Annual earnings while training</label><div class="money"><span>$</span><input id="earnWhile" type="number" min="0" step="1000" value="0"></div><small>Wages or taxable pay earned during the path.</small></div>
+          <div id="startingPayField" class="field"><label for="startingPay">Expected first-year pay</label><div class="money"><span>$</span><input id="startingPay" type="number" min="0" step="1000" placeholder="Auto-filled from career data"></div><small>Optional. Leave blank to estimate from the O*NET median.</small></div>
         </div>
         <div id="formMessage" class="message" aria-live="polite"></div><button id="addOption" class="primary">Score this path</button>
       </section>
