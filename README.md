@@ -17,6 +17,7 @@ The production brand assets are `careershield-logo.png` for the horizontal navig
 - Comparisons remain device-local in browser `localStorage`.
 - The existing Netlify form, styling system, headers, redirects, and deployment model are preserved.
 - A $49 personalized Decision Report offer uses a Stripe-hosted Payment Link, avoiding a custom payment backend.
+- The CareerShield Guide uses the OpenAI Responses API from a server-side Netlify Function to explain saved comparisons and challenge assumptions without exposing credentials in the browser.
 
 ## Deploy to Netlify
 
@@ -24,6 +25,7 @@ Deploy this folder from a Git repository or with the Netlify CLI. In Netlify pro
 
 - `DATA_GOV_API_KEY` for College Scorecard
 - `ONET_API_KEY` for O*NET Web Services v2
+- `OPENAI_API_KEY` for the CareerShield Guide
 
 Then redeploy. Enable Netlify form detection if you want submissions from the `careershield-interest` form.
 
@@ -38,6 +40,10 @@ The composite score uses these weights: financial outcome 28%, time to earnings 
 Financial outcome estimates earnings over the first five years from the user’s timeline and in-training income, minus net path cost and a simple debt financing drag. Employment demand uses O*NET outlook signals. AI resilience uses a transparent prototype task-text heuristic that favors physical, diagnostic, interpersonal, safety, and field work and discounts routine clerical work. Career flexibility uses related occupations and employing industries returned by O*NET. Missing labor data receives a neutral value.
 
 All results are directional decision support, not financial advice, an insurance offer, or a guarantee of employment or earnings.
+
+## AI guide
+
+The AI guide calls `/api/assistant`, which uses `OPENAI_API_KEY` only inside the Netlify Function. The browser sends the user’s question and up to four locally saved comparison objects. The guide is instructed to use only that supplied comparison data, distinguish estimates from guarantees, ask users to verify unsupported facts, and avoid presenting itself as a financial adviser, recruiter, school, insurer, or government representative. The current model is `gpt-5-mini`, with short response limits to control cost.
 
 ## Paid report checkout
 

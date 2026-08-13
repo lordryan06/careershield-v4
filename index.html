@@ -99,4 +99,12 @@
     </div>
   </main>
   <footer><span>CareerShield V4 prototype</span><span>College data: U.S. Department of Education College Scorecard · Career data: O*NET Web Services by the U.S. Department of Labor</span></footer>
+  <button id="assistantToggle" class="assistant-toggle" type="button" aria-controls="assistantPanel" aria-expanded="false"><span>✦</span> Ask CareerShield</button>
+  <aside id="assistantPanel" class="assistant-panel" aria-labelledby="assistantTitle" hidden>
+    <div class="assistant-head"><div><span class="assistant-mark">✦</span><div><strong id="assistantTitle">CareerShield Guide</strong><small>Ask about your comparison</small></div></div><button id="assistantClose" type="button" aria-label="Close AI guide">×</button></div>
+    <div id="assistantMessages" class="assistant-messages" aria-live="polite"><div class="assistant-bubble bot">I can explain your scores, compare tradeoffs, or flag assumptions to verify. Add paths first for the most useful answers.</div></div>
+    <div class="assistant-prompts"><button type="button">Why is the top path ranked first?</button><button type="button">Which assumptions matter most?</button><button type="button">Compare the downside risks.</button></div>
+    <form id="assistantForm" class="assistant-form"><label class="sr-only" for="assistantInput">Question for CareerShield Guide</label><textarea id="assistantInput" rows="2" maxlength="800" placeholder="Ask about your paths…" required></textarea><button id="assistantSend" type="submit">Send</button></form>
+    <p class="assistant-disclaimer">AI-generated decision support. Verify costs, benefits, eligibility, and outcomes with official sources.</p>
+  </aside>
 </body></html>
