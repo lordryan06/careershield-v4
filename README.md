@@ -5,6 +5,7 @@ CareerShield V4 is a Netlify-ready decision tool for comparing up to four mixed 
 ## V4 highlights
 
 - A single guided builder adapts its questions to all four path types.
+- Military paths use the official O*NET Military Occupational Classification crosswalk, with branch, enlisted/officer/warrant track, specialty-code search, and linked civilian careers.
 - Mixed paths are ranked on expected financial outcome, time to earnings, debt and upfront cost, employment demand, AI resilience, and career flexibility.
 - Every result exposes all six factor scores and the 5-year earnings estimate behind the comparison.
 - Live College Scorecard school search and O*NET occupation data remain server-side through the existing Netlify Functions.
@@ -31,3 +32,5 @@ The composite score uses these weights: financial outcome 28%, time to earnings 
 Financial outcome estimates earnings over the first five years from the user’s timeline and in-training income, minus net path cost and a simple debt financing drag. Employment demand uses O*NET outlook signals. AI resilience uses a transparent prototype task-text heuristic that favors physical, diagnostic, interpersonal, safety, and field work and discounts routine clerical work. Career flexibility uses related occupations and employing industries returned by O*NET. Missing labor data receives a neutral value.
 
 All results are directional decision support, not financial advice, an insurance offer, or a guarantee of employment or earnings.
+
+The military search uses the same `ONET_API_KEY`; no additional military-data credential is required. Supported branches are Army, Air Force, Navy, Marine Corps, Coast Guard, and Space Force.
