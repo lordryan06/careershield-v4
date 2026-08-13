@@ -1,36 +1,31 @@
-# CareerShield V4.1
+# CareerShield V4.1.1 correction release
 
-This update turns CareerShield into a clearer student planning experience while preserving the live Stripe checkout, College Scorecard and O*NET functions, Netlify deployment, existing styling system, and protected OpenAI assistant.
+V4.1.1 corrects confusing inputs and the broken military next-step link while preserving the V4.1 design, live Stripe checkout, federal-data integrations, Netlify deployment, and protected AI assistant.
 
-## Included
+## Corrections
 
-- Clear first-screen explanation and start button.
-- Searchable, visually consistent school, provider, career, and military selectors.
-- College degree/program-length and in-state/out-of-state tuition selectors.
-- Automatic school tuition estimate using College Scorecard data.
-- Scholarships and grants hidden in an optional expandable section.
-- Plain-language information buttons for the six score factors and key financial terms.
-- Color-coded factor bars and a written explanation of every recommendation.
-- Approximate 10-year student-debt payment guidance using a disclosed 6.5% example rate.
-- Official next-step links for schools, registered apprenticeships, training programs, and military recruiting.
-- A printable Build My Plan summary with cost, debt, starting pay, and next actions.
-- Existing $49.99 plus applicable tax live Stripe checkout.
-- Existing 10-answer browser limit and Netlify server-side AI rate limit.
+- College distinguishes degree level from the degree-plan/field search.
+- Trade and training routes no longer show a fake provider dropdown.
+- Provider-level assumptions are identified as editable fallback information until verified live provider data is connected.
+- Military specialties are filtered by branch and career track and scored without requiring a civilian-career selection.
+- Military cost, debt, time-to-earnings, and civilian-career fields are removed from the workflow.
+- GI Bill value assumes full use and includes an eligibility warning.
+- Duty ZIP and dependent status are collected for housing-rate verification.
+- The selected military branch is saved with every new result.
+- Military buttons go to the corresponding official branch website; the dead generic fallback is removed.
 
-## GitHub replacement
-
-Replace these files at their exact destinations:
+## Replace in GitHub
 
 - `index.html`
 - `styles.css`
 - `app.js`
-- `netlify/functions/schools.js`
+- `README.md`
 - `netlify/functions/assistant.js`
+- `netlify/functions/careers.js`
+- `netlify/functions/schools.js`
 
 Commit directly to `main` with:
 
-`Launch CareerShield V4.1 student planning experience`
+`Fix CareerShield V4.1 military and path workflows`
 
-After Netlify publishes, test one path in each of the four categories. For college, switch between in-state and out-of-state tuition and confirm the estimated total changes. Also confirm the deploy log accepts the `/api/assistant` rate-limit rule.
-
-College totals are estimates based on published annual tuition multiplied by the selected program length. They are not degree-specific price quotes and may exclude fees, housing, books, and individual aid.
+Previously saved military comparisons do not contain a branch. Remove and score them again after deployment.
