@@ -49,7 +49,7 @@ The AI guide calls `/api/assistant`, which uses `OPENAI_API_KEY` only inside the
 
 ## Paid report checkout
 
-The current purchase button uses a Stripe **test-mode** Payment Link and is visibly labeled as a test checkout. It cannot collect real payments. Before launch, create or activate the equivalent product in Stripe live mode, replace the test URL in `index.html`, and remove the test banner and warning. Customer fulfillment is currently manual and promises delivery within three business days after assumptions are confirmed.
+The purchase button uses a live Stripe Payment Link for the $49.99 personalized report, plus applicable tax calculated at checkout. Stripe hosts the checkout and processes payment details. Customer fulfillment is currently manual and promises delivery within three business days after assumptions are confirmed.
 
 The military search uses the same `ONET_API_KEY`; no additional military-data credential is required. Supported branches are Army, Air Force, Navy, Marine Corps, Coast Guard, and Space Force.
 
