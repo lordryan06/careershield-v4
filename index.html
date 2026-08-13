@@ -58,6 +58,24 @@
             </div>
             <div id="tradeSummary" class="comp-summary" aria-live="polite"></div>
           </div>
+          <div id="trainingEconomics" class="military-comp training-economics wide" hidden>
+            <div class="comp-head"><div><strong>Credential outcomes and costs</strong><span>Probability-adjust the return instead of assuming completion and placement.</span></div><span class="year-badge">Editable assumptions</span></div>
+            <div class="grid three">
+              <div class="field"><label for="credentialType">Credential type</label><select id="credentialType"><option>Industry certification</option><option>State or federal license</option><option>Technical certificate</option><option>Bootcamp certificate</option><option>Vendor certification</option><option>Other short-term credential</option></select></div>
+              <div class="field"><label for="trainingMonths">Program length</label><div class="suffix"><input id="trainingMonths" type="number" min="1" max="60" value="9"><span>months</span></div></div>
+              <div class="field"><label for="trainingTuition">Tuition and program fees</label><div class="money"><span>$</span><input id="trainingTuition" type="number" min="0" step="100" value="10000"></div></div>
+              <div class="field"><label for="trainingExamCost">Exam and application fees</label><div class="money"><span>$</span><input id="trainingExamCost" type="number" min="0" step="25" value="500"></div></div>
+              <div class="field"><label for="trainingMaterials">Equipment and materials</label><div class="money"><span>$</span><input id="trainingMaterials" type="number" min="0" step="50" value="1000"></div></div>
+              <div class="field"><label for="trainingRenewal">Annual renewal / continuing education</label><div class="money"><span>$</span><input id="trainingRenewal" type="number" min="0" step="25" value="200"></div></div>
+              <div class="field"><label for="trainingSupport">Employer reimbursement or grants</label><div class="money"><span>$</span><input id="trainingSupport" type="number" min="0" step="100" value="0"></div></div>
+              <div class="field"><label for="trainingEarnWhile">Annual earnings during training</label><div class="money"><span>$</span><input id="trainingEarnWhile" type="number" min="0" step="1000" value="0"></div></div>
+              <div class="field"><label for="completionProbability">Your completion likelihood</label><select id="completionProbability"><option value=".95">Very likely · 95%</option><option value=".8" selected>Likely · 80%</option><option value=".6">Uncertain · 60%</option><option value=".4">At risk · 40%</option></select></div>
+              <div class="field"><label for="placementRate">Verified related-job placement rate</label><div class="suffix"><input id="placementRate" type="number" min="0" max="100" value="70"><span>%</span></div><small>Use verified provider data; reduce if unavailable.</small></div>
+              <div class="field"><label for="trainingStartingSalary">Expected salary after placement</label><div class="money"><span>$</span><input id="trainingStartingSalary" type="number" min="0" step="1000" value="50000"></div></div>
+              <div class="field"><label for="fallbackSalary">Annual earnings without related placement</label><div class="money"><span>$</span><input id="fallbackSalary" type="number" min="0" step="1000" value="30000"></div></div>
+            </div>
+            <div id="trainingSummary" class="comp-summary" aria-live="polite"></div>
+          </div>
           <div id="costField" class="field"><label id="costLabel" for="cost">Estimated total cost</label><div class="money"><span>$</span><input id="cost" type="number" min="0" step="500" placeholder="80000"></div><small id="costHint">Tuition, fees, and required materials before grants.</small></div>
           <div id="aidField" class="field"><label id="aidLabel" for="grants">Scholarships and grants</label><div class="money"><span>$</span><input id="grants" type="number" min="0" step="500" value="0"></div><small id="aidHint">Funding you do not expect to repay.</small></div>
           <div class="field"><label for="debt">Expected debt</label><div class="money"><span>$</span><input id="debt" type="number" min="0" step="500" placeholder="40000"></div><small>Borrowing you expect when training is complete.</small></div>

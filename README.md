@@ -8,6 +8,7 @@ CareerShield V4 is a Netlify-ready decision tool for comparing up to four mixed 
 - Military paths use the official O*NET Military Occupational Classification crosswalk, with branch, enlisted/officer/warrant track, specialty-code search, and linked civilian careers.
 - Military comparisons include editable pay grade, basic pay, housing and food allowances, special pay, accession bonus, service commitment, and risk-adjusted education-benefit value.
 - Skilled-trades comparisons model hourly entry pay, progressive wage steps, paid hours, journey-level wages, program duration, tools, classroom fees, licensing costs, and employer or union support.
+- Certification and technical-training comparisons model credential type, tuition, exams, materials, renewal costs, reimbursement, completion likelihood, verified related-job placement, target salary, and fallback earnings.
 - Mixed paths are ranked on expected financial outcome, time to earnings, debt and upfront cost, employment demand, AI resilience, and career flexibility.
 - Every result exposes all six factor scores and the 5-year earnings estimate behind the comparison.
 - Live College Scorecard school search and O*NET occupation data remain server-side through the existing Netlify Functions.
@@ -40,3 +41,5 @@ The military search uses the same `ONET_API_KEY`; no additional military-data cr
 Military compensation uses editable 2026-oriented starting assumptions. BAS defaults distinguish enlisted and officer rates; BAH is entered by the user because it depends on duty ZIP code, pay grade, dependency status, and housing availability. Users should verify basic pay, bonuses, special pay, and housing through official DoD/DFAS sources and their written offer. Education benefit value is probability-adjusted and depends on qualifying service and actual use.
 
 The skilled-trades model follows the U.S. Department of Labor Registered Apprenticeship structure: apprentices are paid employees and receive progressive wage increases as skills and productivity grow. The model divides the program into editable wage steps, calculates earnings month by month, applies journey-level wages after completion, and deducts net tools, instruction, and licensing costs. Actual schedules and requirements vary by sponsor, agreement, occupation, and location.
+
+The certification and technical-training model probability-adjusts earnings by multiplying personal completion likelihood by the verified related-job placement rate. Users should prefer state or federal Eligible Training Provider performance data and independently verified outcomes over marketing claims. The model includes fallback earnings when completion or related placement does not occur, plus expected renewal and continuing-education costs.
