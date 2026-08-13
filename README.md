@@ -2,6 +2,8 @@
 
 CareerShield V4 is a Netlify-ready decision tool for comparing up to four mixed career paths: college, skilled trades and apprenticeships, certifications and technical training, and military service.
 
+The production brand assets are `careershield-logo.png` for the horizontal navigation lockup and `careershield-icon.png` for the browser icon.
+
 ## V4 highlights
 
 - A single guided builder adapts its questions to all four path types.
