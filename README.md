@@ -4,6 +4,8 @@ CareerShield V4 is a Netlify-ready decision tool for comparing up to four mixed 
 
 The production brand assets are `careershield-logo.png` for the horizontal navigation lockup and `careershield-icon.png` for the browser icon.
 
+`legal.html` contains the paid-beta Privacy Notice, Terms of Use, personalized-report Refund Policy, and AI Guide disclosure. These are operational drafts, not a substitute for review by a qualified attorney before broad commercial launch.
+
 ## V4 highlights
 
 - A single guided builder adapts its questions to all four path types.
