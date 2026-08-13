@@ -14,6 +14,7 @@ CareerShield V4 is a Netlify-ready decision tool for comparing up to four mixed 
 - Live College Scorecard school search and O*NET occupation data remain server-side through the existing Netlify Functions.
 - Comparisons remain device-local in browser `localStorage`.
 - The existing Netlify form, styling system, headers, redirects, and deployment model are preserved.
+- A $49 personalized Decision Report offer uses a Stripe-hosted Payment Link, avoiding a custom payment backend.
 
 ## Deploy to Netlify
 
@@ -35,6 +36,10 @@ The composite score uses these weights: financial outcome 28%, time to earnings 
 Financial outcome estimates earnings over the first five years from the user’s timeline and in-training income, minus net path cost and a simple debt financing drag. Employment demand uses O*NET outlook signals. AI resilience uses a transparent prototype task-text heuristic that favors physical, diagnostic, interpersonal, safety, and field work and discounts routine clerical work. Career flexibility uses related occupations and employing industries returned by O*NET. Missing labor data receives a neutral value.
 
 All results are directional decision support, not financial advice, an insurance offer, or a guarantee of employment or earnings.
+
+## Paid report checkout
+
+The current purchase button uses a Stripe **test-mode** Payment Link and is visibly labeled as a test checkout. It cannot collect real payments. Before launch, create or activate the equivalent product in Stripe live mode, replace the test URL in `index.html`, and remove the test banner and warning. Customer fulfillment is currently manual and promises delivery within three business days after assumptions are confirmed.
 
 The military search uses the same `ONET_API_KEY`; no additional military-data credential is required. Supported branches are Army, Air Force, Navy, Marine Corps, Coast Guard, and Space Force.
 
