@@ -3,8 +3,11 @@
 ## V4.2 status
 
 - College selection now loads that institution's reported degree plans from College Scorecard field-of-study records.
+- Selecting a degree plan loads a dependent target-career dropdown through the official O*NET education (CIP) crosswalk.
 - Skilled trades, apprenticeships, certifications, and technical training now share one clearer `Trades & training` route with a training-type selector.
+- Trades and training use a dropdown backed by the complete O*NET occupation catalog.
 - Military specialties remain filtered by service branch and enlisted, commissioned-officer, or warrant-officer track using the O*NET military crosswalk.
+- Military users choose a specialty category and then a dependent specialty dropdown filtered by branch and career track.
 - CareerOneStop live provider, apprenticeship, and local-program data is intentionally not simulated. Add its credentials only after CareerOneStop approves API access.
 - BAH remains a user-verified amount because the official rate depends on duty location, pay grade, and dependent status. Do not replace it with a national estimate.
 

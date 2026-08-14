@@ -24,9 +24,23 @@ export default async (request) => {
   const code = params.get("code")?.trim();
   const search = params.get("search")?.trim();
   const military = params.get("military")?.trim();
+  const education = params.get("education")?.trim();
+  const catalog = params.get("catalog")?.trim();
   const branch = params.get("branch")?.trim() || "all";
   const track = params.get("track")?.trim() || "all";
   try {
+    if (catalog === "occupations") {
+      const data = await onet("/online/occupations/?start=1&end=1200", apiKey);
+      return json({ results: list(data.occupation).map(o => ({ code: o.code, name: o.title, brightOutlook: Boolean(o.tags?.bright_outlook) })) });
+    }
+    if (education) {
+      if (!/^\d{2}(?:\.?\d{2})?$/.test(education)) return json({ error: "Choose a valid degree plan." }, 400);
+      const cip = education.length === 4 && !education.includes(".") ? `${education.slice(0, 2)}.${education.slice(2)}` : education;
+      const data = await onet(`/online/crosswalks/education?keyword=${encodeURIComponent(cip)}&start=1&end=100`, apiKey);
+      const seen = new Set();
+      const results = list(data.match).flatMap(item => list(item.occupation)).map(o => ({ code: o.code, name: o.title, brightOutlook: Boolean(o.tags?.bright_outlook) })).filter(o => o.code && !seen.has(o.code) && seen.add(o.code));
+      return json({ results });
+    }
     if (military) {
       if (military.length < 2 || military.length > 100) return json({ error: "Enter a military job search from 2 to 100 characters." }, 400);
       const branches = ["all", "air_force", "army", "coast_guard", "marine_corps", "navy", "space_force"];
@@ -54,7 +68,7 @@ export default async (request) => {
     ];
     const settled = await Promise.allSettled(paths.map(path => onet(path, apiKey)));
     if (settled[0].status === "rejected") throw settled[0].reason;
-    const [career, outlook, education, explore, tasks] = settled.map(x => x.status === "fulfilled" ? x.value : {});
+    const [career, outlook, educationData, explore, tasks] = settled.map(x => x.status === "fulfilled" ? x.value : {});
     return json({
       code: career.code || code,
       name: career.title,
@@ -63,8 +77,8 @@ export default async (request) => {
       outlook: outlook.outlook || null,
       brightOutlook: list(outlook.bright_outlook),
       education: {
-        jobZone: education.job_zone || null,
-        usuallyNeeded: list(education.education_usually_needed)
+        jobZone: educationData.job_zone || null,
+        usuallyNeeded: list(educationData.education_usually_needed)
       },
       relatedOccupations: list(explore.careers).slice(0, 8).map(o => ({ code: o.code, name: o.title })),
       industries: list(explore.industries).slice(0, 6).map(i => i.title),
