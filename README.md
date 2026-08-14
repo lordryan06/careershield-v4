@@ -2,6 +2,8 @@
 
 ## V4.3 experience update
 
+- The numbered Route, Path details, and Money & outcome progress controls are now clickable for direct navigation while preserving entered information.
+- Print My Plan now produces a dedicated Career Decision Plan instead of printing the surrounding website. It includes the leading recommendation, key money figures, factor scores, all compared paths, next steps, assumptions, and official data sources.
 - College debt now defaults to the full estimated tuition remaining after entered scholarships and grants, preventing a school-wide historical median from understating the selected student's projected cost.
 - Military paths now estimate the earned Post-9/11 GI Bill from projected service eligibility, school type, annual net tuition, school-location housing, academic years, and books. The estimate is shown as a future education benefit rather than immediate military compensation.
 - The side-by-side area now invites users with one to three scored paths to start another path instead of continuing to show the empty-state message.
