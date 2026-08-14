@@ -107,3 +107,17 @@ $("dependentStatus").addEventListener("change",loadBah);
 function applySelectedProgram(){const option=$("collegePlan").selectedOptions[0],index=Number(option?.dataset.programIndex);selectedProgram=option?.value!==""&&Number.isInteger(index)?schoolProgramChoices[index]:null;if(!selectedProgram)return;const credential=selectedProgram.credential.toLowerCase();const months=credential.includes("associate")?24:credential.includes("bachelor")?48:credential.includes("certificate")?12:credential.includes("master")||credential.includes("doctoral")||credential.includes("professional")?72:Number($("degree").value||48);const degreeOption=[...$("degree").options].find(item=>Number(item.value)===months);if(degreeOption)$("degree").value=degreeOption.value;schoolTuition();if(selectedProgram.debt)$("debt").value=Math.round(selectedProgram.debt);if(selectedProgram.earnings)$("startingPay").value=Math.round(selectedProgram.earnings);updateDebtGuidance();const facts=[selectedProgram.earnings?`reported earnings ${money(selectedProgram.earnings)}`:"earnings suppressed or unavailable",selectedProgram.debt?`reported median debt ${money(selectedProgram.debt)}`:"program debt suppressed or unavailable"];$("collegePlanHint").textContent=`College Scorecard: ${facts.join(" · ")}. Tuition is estimated from the school rate and credential length because federal data does not publish tuition by major.`}
 $("collegePlan").addEventListener("change",applySelectedProgram);
 $("schoolSearch").addEventListener("input",()=>{selectedProgram=null;schoolProgramChoices=[]});
+
+const floatingInfoTooltip=document.createElement("div");
+floatingInfoTooltip.className="floating-info-tooltip";
+floatingInfoTooltip.setAttribute("role","tooltip");
+floatingInfoTooltip.hidden=true;
+document.body.appendChild(floatingInfoTooltip);
+function showFloatingInfo(button){const text=button.dataset.tip;if(!text)return;floatingInfoTooltip.textContent=text;floatingInfoTooltip.hidden=false;const buttonRect=button.getBoundingClientRect(),tipRect=floatingInfoTooltip.getBoundingClientRect(),margin=8;let left=buttonRect.left+buttonRect.width/2-tipRect.width/2;left=Math.max(margin,Math.min(left,window.innerWidth-tipRect.width-margin));let top=buttonRect.top-tipRect.height-9;if(top<margin)top=Math.min(window.innerHeight-tipRect.height-margin,buttonRect.bottom+9);floatingInfoTooltip.style.left=`${Math.round(left)}px`;floatingInfoTooltip.style.top=`${Math.round(top)}px`}
+function hideFloatingInfo(){floatingInfoTooltip.hidden=true}
+document.addEventListener("pointerover",event=>{const button=event.target.closest?.(".info");if(button&&!button.contains(event.relatedTarget))showFloatingInfo(button)});
+document.addEventListener("pointerout",event=>{const button=event.target.closest?.(".info");if(button&&!button.contains(event.relatedTarget))hideFloatingInfo()});
+document.addEventListener("focusin",event=>{const button=event.target.closest?.(".info");if(button)showFloatingInfo(button)});
+document.addEventListener("focusout",event=>{if(event.target.closest?.(".info"))hideFloatingInfo()});
+window.addEventListener("scroll",hideFloatingInfo,true);
+window.addEventListener("resize",hideFloatingInfo);

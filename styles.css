@@ -19,6 +19,10 @@
 .weight-grid .info::after{left:auto;right:-8px;transform:translateY(5px)}
 .weight-grid .info:hover::after,.weight-grid .info:focus::after{transform:translateY(0)}
 @media(max-width:650px){.metric .info::after{left:auto;right:-12px}}
+
+/* JavaScript renders tooltips at page level so cards with overflow cannot clip them. */
+.info::after{display:none!important}
+.floating-info-tooltip{position:fixed;z-index:1000;width:min(240px,calc(100vw - 16px));padding:9px 11px;border-radius:8px;background:var(--navy);color:#fff;font-size:11px;font-weight:500;line-height:1.45;text-align:left;box-shadow:0 8px 24px rgba(9,35,61,.22);pointer-events:none}
 .military-comp{padding:20px;border:1px solid #cbd9eb;border-radius:13px;background:#f7faff}.comp-head{display:flex;align-items:start;justify-content:space-between;gap:20px;margin-bottom:18px}.comp-head strong,.comp-head span{display:block}.comp-head strong{color:var(--navy);font-size:15px}.comp-head div>span{margin-top:3px;color:var(--muted);font-size:12px}.year-badge{padding:5px 8px;border-radius:6px;background:#e7effc;color:#315b8d!important;font-size:10px!important;font-weight:800;white-space:nowrap}.three{grid-template-columns:repeat(3,1fr)}.suffix{position:relative}.suffix input{padding-right:72px}.suffix span{position:absolute;right:13px;top:14px;color:var(--muted);font-size:12px}.comp-summary{margin-top:17px;padding:13px 15px;border-radius:9px;background:#eaf2ff;color:#315476;font-size:12px;line-height:1.5}.comp-summary strong{color:var(--navy);font-size:15px}.fact.wide-fact{grid-column:1/-1;padding-top:10px;border-top:1px dashed var(--line)}
 @media(max-width:900px){.three{grid-template-columns:1fr 1fr}}
 @media(max-width:650px){.three{grid-template-columns:1fr}.comp-head{display:block}.year-badge{display:inline-block!important;margin-top:8px}}
