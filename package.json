@@ -3,5 +3,14 @@
   "version": "4.0.0",
   "private": true,
   "type": "module",
-  "scripts": { "dev": "npx netlify dev" }
+  "scripts": {
+    "build": "esbuild auth.js --bundle --format=iife --outfile=auth.bundle.js",
+    "dev": "npm run build && npx netlify dev"
+  },
+  "dependencies": {
+    "@netlify/identity": "^1.2.0"
+  },
+  "devDependencies": {
+    "esbuild": "latest"
+  }
 }
