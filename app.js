@@ -126,4 +126,5 @@ function updateSavedProgress(){const panel=$("savedProgress");panel.hidden=!comp
 const saveWithProgress=save;
 save=()=>{saveWithProgress();updateSavedProgress()};
 $("viewSavedPaths").addEventListener("click",()=>document.querySelector(".comparison").scrollIntoView({behavior:"smooth",block:"start"}));
+$("restartApp").addEventListener("click",()=>{if(!window.confirm("Restart CareerShield and permanently clear all saved paths and current selections on this device?"))return;comparisons=[];localStorage.removeItem(STORE);localStorage.removeItem(ASSISTANT_USAGE_KEY);window.location.hash="builder-title";window.location.reload()});
 updateSavedProgress();
