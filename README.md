@@ -31,7 +31,8 @@ The production brand assets are `careershield-logo.png` for the horizontal navig
 - Live College Scorecard school search and O*NET occupation data remain server-side through the existing Netlify Functions.
 - Comparisons remain available device-local in browser `localStorage` for signed-out visitors.
 - Netlify Identity adds email/password account creation, confirmation-link handling, login, and logout. Signed-in users securely synchronize up to four comparisons through an authenticated Netlify Function and a user-specific Netlify Blobs record.
-- The account dashboard lets signed-in customers reopen, rename, duplicate, or delete saved paths and erase all synchronized plan data. Stripe purchase history remains receipt-based until a verified Stripe webhook is added.
+- The account dashboard lets signed-in customers reopen, rename, duplicate, or delete saved paths, erase synchronized plan data, and view verified personalized-report purchases.
+- Signed-in report checkout now uses a signed `client_reference_id`. A signature-verified Stripe webhook stores verified report purchases in an account-specific Netlify Blobs record and displays them in the dashboard.
 - The existing Netlify form, styling system, headers, redirects, and deployment model are preserved.
 - A $49 personalized Decision Report offer uses a Stripe-hosted Payment Link, avoiding a custom payment backend.
 - The CareerShield Guide uses the OpenAI Responses API from a server-side Netlify Function to explain saved comparisons and challenge assumptions without exposing credentials in the browser.
@@ -43,10 +44,28 @@ Deploy this folder from a Git repository or with the Netlify CLI. In Netlify pro
 - `DATA_GOV_API_KEY` for College Scorecard
 - `ONET_API_KEY` for O*NET Web Services v2
 - `OPENAI_API_KEY` for the CareerShield Guide
+- `STRIPE_WEBHOOK_SECRET` from the live Stripe webhook endpoint (`whsec_...`)
+- `STRIPE_CHECKOUT_REFERENCE_SECRET`, a private random value of at least 32 characters used to prevent account-reference tampering
 
 Then redeploy. Enable Netlify form detection if you want submissions from the `careershield-interest` form.
 
 Netlify Identity must also be enabled under **Project configuration > Identity**. Registration should be set to **Open** if customers may create their own accounts. Netlify runs `npm run build` during deployment to bundle the official `@netlify/identity` browser package into `auth.bundle.js`.
+
+## Stripe report-order webhook
+
+After deploying, create a live Stripe webhook/event destination pointing to:
+
+`https://YOUR-CAREERSHIELD-DOMAIN/api/stripe-webhook`
+
+Subscribe to:
+
+- `checkout.session.completed`
+- `checkout.session.async_payment_succeeded`
+- `checkout.session.async_payment_failed`
+
+Reveal the endpoint signing secret in Stripe and save it in Netlify as `STRIPE_WEBHOOK_SECRET`. Create a separate random secret of at least 32 characters and save it as `STRIPE_CHECKOUT_REFERENCE_SECRET`, then redeploy. Never put either secret in GitHub or browser code.
+
+The checkout endpoint requires a valid Netlify Identity session, locks the Stripe checkout email to the account email, and signs the customer reference. The webhook reads the unmodified request body, verifies the Stripe signature with a five-minute tolerance, validates the signed customer reference, and performs an idempotent update keyed by Stripe Checkout Session ID.
 
 ## Local development
 

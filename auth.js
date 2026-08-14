@@ -63,12 +63,36 @@ function renderDashboard() {
     </article>`).join("") : '<div class="dashboard-empty">No paths saved yet. Build a comparison and it will appear here automatically.</div>';
 }
 
+function formatOrderAmount(amount, currency = "usd") {
+  return new Intl.NumberFormat("en-US", { style: "currency", currency: currency.toUpperCase() }).format(Number(amount || 0) / 100);
+}
+
+async function loadReportOrders() {
+  const target = byId("dashboardOrders");
+  target.innerHTML = '<div class="dashboard-empty">Loading verified purchases…</div>';
+  try {
+    const response = await fetch("/api/report-orders", { credentials: "same-origin", headers: { accept: "application/json" } });
+    const data = await response.json().catch(() => ({}));
+    if (!response.ok) throw new Error(data.error || "Purchases could not be loaded.");
+    const orders = Array.isArray(data.orders) ? data.orders : [];
+    target.innerHTML = orders.length ? orders.map(order => {
+      const date = order.purchasedAt ? new Date(order.purchasedAt).toLocaleDateString() : "Date unavailable";
+      const statusLabel = order.status === "purchased" ? "Purchased" : order.status === "processing" ? "Processing" : "Payment issue";
+      const statusClass = order.status === "processing" ? "processing" : order.status === "purchased" ? "" : "issue";
+      return `<article class="dashboard-order"><div><strong>Personalized Decision Report · ${safe(formatOrderAmount(order.amountTotal, order.currency))}</strong><small>${safe(date)} · Stripe order ${safe(String(order.sessionId || "").slice(-10))}</small></div><span class="order-status ${statusClass}">${statusLabel}</span></article>`;
+    }).join("") : '<div class="dashboard-empty">No verified report purchases yet. Purchases made while logged in will appear here.</div>';
+  } catch (error) {
+    target.innerHTML = `<div class="dashboard-empty">${safe(error.message)}</div>`;
+  }
+}
+
 function openDashboard() {
   if (!currentUser) return;
   byId("accountMenu").hidden = true;
   dashboardMessage("");
   renderDashboard();
   dashboard.showModal();
+  loadReportOrders();
 }
 
 async function plansRequest(method = "GET", plans) {
@@ -187,6 +211,32 @@ byId("erasePlanData").addEventListener("click", async () => {
     byId("erasePlanData").disabled = false;
   }
 });
+
+document.querySelectorAll(".report-checkout-link").forEach(link => link.addEventListener("click", async event => {
+  event.preventDefault();
+  if (!currentUser) {
+    if (dashboard.open) dashboard.close();
+    chooseMode("login");
+    dialog.showModal();
+    message("Log in first so Stripe can attach the purchase to your CareerShield account.");
+    return;
+  }
+  const original = link.textContent;
+  link.setAttribute("aria-disabled", "true");
+  link.textContent = "Opening secure checkout…";
+  try {
+    const response = await fetch("/api/report-checkout", { method: "POST", credentials: "same-origin", headers: { accept: "application/json" } });
+    const data = await response.json().catch(() => ({}));
+    if (!response.ok || !data.url) throw new Error(data.error || "Checkout could not be opened.");
+    window.location.assign(data.url);
+  } catch (error) {
+    dashboardMessage(error.message, true);
+    window.alert(error.message);
+  } finally {
+    link.removeAttribute("aria-disabled");
+    link.textContent = original;
+  }
+}));
 
 form.addEventListener("submit", async event => {
   event.preventDefault();
