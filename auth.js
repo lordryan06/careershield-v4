@@ -2,6 +2,7 @@ import { getUser, handleAuthCallback, login, logout, signup } from "@netlify/ide
 
 const byId = id => document.getElementById(id);
 const dialog = byId("authDialog");
+const dashboard = byId("dashboardDialog");
 const form = byId("authForm");
 let mode = "login";
 let currentUser = null;
@@ -39,6 +40,35 @@ function storageStatus(text, error = false) {
   const target = byId("accountStorageStatus");
   target.textContent = text;
   target.style.color = error ? "#b42318" : "";
+}
+
+function safe(value = "") {
+  return String(value).replace(/[&<>"']/g, character => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[character]);
+}
+
+function dashboardMessage(text, error = false) {
+  const target = byId("dashboardMessage");
+  target.textContent = text;
+  target.style.color = error ? "#b42318" : "";
+}
+
+function renderDashboard() {
+  const plans = window.CareerShieldPlans?.get?.() || [];
+  byId("dashboardEmail").textContent = currentUser?.email || "";
+  byId("dashboardPlanCount").textContent = `${plans.length} of 4`;
+  byId("dashboardPlans").innerHTML = plans.length ? plans.map((plan, index) => `
+    <article class="dashboard-plan">
+      <div><strong>${safe(plan.savedLabel || plan.name || "Saved path")}</strong><small>${safe(plan.pathLabel || plan.path || "Career path")} · ${safe(plan.career?.name || "Career not available")} · Score ${Number(plan.score) || 0}/100</small></div>
+      <div class="dashboard-plan-actions"><button type="button" data-dashboard-action="open" data-index="${index}">Open</button><button type="button" data-dashboard-action="rename" data-index="${index}">Rename</button><button type="button" data-dashboard-action="duplicate" data-index="${index}">Duplicate</button><button type="button" data-dashboard-action="delete" data-index="${index}">Delete</button></div>
+    </article>`).join("") : '<div class="dashboard-empty">No paths saved yet. Build a comparison and it will appear here automatically.</div>';
+}
+
+function openDashboard() {
+  if (!currentUser) return;
+  byId("accountMenu").hidden = true;
+  dashboardMessage("");
+  renderDashboard();
+  dashboard.showModal();
 }
 
 async function plansRequest(method = "GET", plans) {
@@ -92,6 +122,8 @@ byId("accountButton").addEventListener("click", async () => {
   else { chooseMode("login"); dialog.showModal(); }
 });
 byId("authClose").addEventListener("click", () => dialog.close());
+byId("dashboardClose").addEventListener("click", () => dashboard.close());
+byId("dashboardButton").addEventListener("click", openDashboard);
 byId("loginTab").addEventListener("click", () => chooseMode("login"));
 byId("signupTab").addEventListener("click", () => chooseMode("signup"));
 byId("logoutButton").addEventListener("click", async () => {
@@ -105,6 +137,56 @@ window.addEventListener("careershield:plans-changed", event => {
   syncTimer = setTimeout(() => syncPlans(event.detail?.plans || []).catch(() => {}), 350);
 });
 window.CareerShieldAccount = { syncPlans };
+
+byId("dashboardPlans").addEventListener("click", event => {
+  const button = event.target.closest("[data-dashboard-action]");
+  if (!button) return;
+  const plans = window.CareerShieldPlans?.get?.() || [];
+  const index = Number(button.dataset.index);
+  const plan = plans[index];
+  if (!plan) return;
+  const action = button.dataset.dashboardAction;
+  if (action === "open") {
+    dashboard.close();
+    document.querySelector(".comparison")?.scrollIntoView({ behavior: "smooth", block: "start" });
+    return;
+  }
+  if (action === "rename") {
+    const label = window.prompt("Name this saved path:", plan.savedLabel || plan.name || "");
+    if (label === null) return;
+    plan.savedLabel = label.trim().slice(0, 80);
+    plans[index] = plan;
+  }
+  if (action === "duplicate") {
+    if (plans.length >= 4) return dashboardMessage("You can save up to four paths. Delete one before duplicating.", true);
+    const copy = JSON.parse(JSON.stringify(plan));
+    copy.id = globalThis.crypto?.randomUUID?.() || `${Date.now()}-${Math.random().toString(16).slice(2)}`;
+    copy.savedLabel = `${plan.savedLabel || plan.name || "Saved path"} copy`.slice(0, 80);
+    plans.push(copy);
+  }
+  if (action === "delete") {
+    if (!window.confirm(`Delete ${plan.savedLabel || plan.name || "this saved path"}?`)) return;
+    plans.splice(index, 1);
+  }
+  window.CareerShieldPlans.set(plans);
+  renderDashboard();
+  dashboardMessage(action === "delete" ? "Path deleted and syncing." : action === "duplicate" ? "Path duplicated and syncing." : "Name updated and syncing.");
+});
+
+byId("erasePlanData").addEventListener("click", async () => {
+  if (!window.confirm("Permanently erase every saved comparison from this account and this device?")) return;
+  byId("erasePlanData").disabled = true;
+  try {
+    window.CareerShieldPlans.set([]);
+    await syncPlans([]);
+    renderDashboard();
+    dashboardMessage("All saved plan data has been erased.");
+  } catch (error) {
+    dashboardMessage(`${error.message} Please try again.`, true);
+  } finally {
+    byId("erasePlanData").disabled = false;
+  }
+});
 
 form.addEventListener("submit", async event => {
   event.preventDefault();

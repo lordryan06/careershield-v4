@@ -128,4 +128,4 @@ save=(sync=true)=>{saveWithProgress(sync);updateSavedProgress()};
 $("viewSavedPaths").addEventListener("click",()=>document.querySelector(".comparison").scrollIntoView({behavior:"smooth",block:"start"}));
 $("restartApp").addEventListener("click",async()=>{if(!window.confirm("Restart CareerShield and permanently clear all saved paths and current selections?"))return;comparisons=[];save();localStorage.removeItem(ASSISTANT_USAGE_KEY);if(window.CareerShieldAccount?.syncPlans)await window.CareerShieldAccount.syncPlans([]).catch(()=>{});window.location.hash="builder-title";window.location.reload()});
 updateSavedProgress();
-window.CareerShieldPlans={get:()=>comparisons.map(plan=>({...plan})),replace:plans=>{comparisons=Array.isArray(plans)?plans.slice(0,4):[];save(false);render();updateSavedProgress()}};
+window.CareerShieldPlans={get:()=>comparisons.map(plan=>({...plan})),replace:plans=>{comparisons=Array.isArray(plans)?plans.slice(0,4):[];save(false);render();updateSavedProgress()},set:plans=>{comparisons=Array.isArray(plans)?plans.slice(0,4):[];save(true);render();updateSavedProgress()}};
