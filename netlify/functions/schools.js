@@ -11,6 +11,15 @@ const json = (data, status = 200) => new Response(JSON.stringify(data), {
   headers: { "content-type": "application/json; charset=utf-8", "cache-control": "public, max-age=300" }
 });
 
+const firstNumber = (item, paths) => {
+  for (const path of paths) {
+    const value = item[path] ?? path.split(".").reduce((current, key) => current?.[key], item);
+    const number = Number(value);
+    if (Number.isFinite(number) && number > 0) return number;
+  }
+  return null;
+};
+
 export default async (request) => {
   if (request.method !== "GET") return json({ error: "Method not allowed" }, 405);
   const params = new URL(request.url).searchParams;
@@ -37,7 +46,17 @@ export default async (request) => {
       const programs = raw.map(item => ({
         code: String(item.code ?? item.cip_code ?? item["code"] ?? ""),
         title: String(item.title ?? item.cip_title ?? item["title"] ?? ""),
-        credential: String(item.credential?.title ?? item.credential_title ?? item["credential.title"] ?? "")
+        credential: String(item.credential?.title ?? item.credential_title ?? item["credential.title"] ?? ""),
+        credentialLevel: Number(item.credential?.level ?? item.credential_level ?? item["credential.level"]) || null,
+        earnings: firstNumber(item, [
+          "earnings.4_yrs_after_completion.median", "earnings.5_yrs_after_completion.median",
+          "earnings.highest.4_yr.overall_median_earnings", "earnings.highest.3_yr.overall_median_earnings",
+          "earnings.1_yr.overall_median_earnings", "earnings.1_yr_after_completion.median"
+        ]),
+        debt: firstNumber(item, [
+          "debt.all_students.completers.median", "debt.all_students.completers.overall",
+          "debt.all_students.completers.overall_median", "debt.all.student.median"
+        ])
       })).filter(item => item.title && !seen.has(`${item.code}|${item.credential}`) && seen.add(`${item.code}|${item.credential}`));
       return json({ school: row.school?.name || row["school.name"] || "", programs });
     } catch {

@@ -9,7 +9,9 @@
 - Military specialties remain filtered by service branch and enlisted, commissioned-officer, or warrant-officer track using the O*NET military crosswalk.
 - Military users choose a specialty category and then a dependent specialty dropdown filtered by branch and career track.
 - CareerOneStop live provider, apprenticeship, and local-program data is intentionally not simulated. Add its credentials only after CareerOneStop approves API access.
-- BAH remains a user-verified amount because the official rate depends on duty location, pay grade, and dependent status. Do not replace it with a national estimate.
+- BAH now loads automatically from the official 2026 DoD all-location rate file using duty ZIP, pay grade, and dependent status.
+- Basic pay uses the official 2026 DFAS starting-service rates, and BAS automatically uses the 2026 enlisted or officer rate.
+- When College Scorecard reports program-level earnings or debt, selecting the degree plan applies those values automatically. Suppressed values remain clearly unavailable rather than becoming zero.
 
 CareerShield V4 is a Netlify-ready decision tool for comparing up to four mixed career paths: college, skilled trades and apprenticeships, certifications and technical training, and military service.
 
@@ -64,7 +66,7 @@ The purchase button uses a live Stripe Payment Link for the $49.99 personalized 
 
 The military search uses the same `ONET_API_KEY`; no additional military-data credential is required. Supported branches are Army, Air Force, Navy, Marine Corps, Coast Guard, and Space Force.
 
-Military compensation uses editable 2026-oriented starting assumptions. BAS defaults distinguish enlisted and officer rates; BAH is entered by the user because it depends on duty ZIP code, pay grade, dependency status, and housing availability. Users should verify basic pay, bonuses, special pay, and housing through official DoD/DFAS sources and their written offer. Education benefit value assumes full use and still depends on qualifying service; users must verify eligibility and current VA rates.
+Military compensation uses official 2026 starting-service DFAS basic pay, 2026 BAS, and the DoD all-location BAH file. CareerShield maps duty ZIP code to the appropriate Military Housing Area, then selects the pay-grade and dependency-status rate. Government housing, overseas assignments, rate protection, special circumstances, bonuses, and specialty pay still require confirmation through the service and written offer. Education benefit value assumes full use and still depends on qualifying service; users must verify eligibility and current VA rates.
 
 The skilled-trades model follows the U.S. Department of Labor Registered Apprenticeship structure: apprentices are paid employees and receive progressive wage increases as skills and productivity grow. The model divides the program into editable wage steps, calculates earnings month by month, applies journey-level wages after completion, and deducts net tools, instruction, and licensing costs. Actual schedules and requirements vary by sponsor, agreement, occupation, and location.
 
