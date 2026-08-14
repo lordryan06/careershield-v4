@@ -2,6 +2,10 @@
 
 ## V4.3 experience update
 
+- College debt now defaults to the full estimated tuition remaining after entered scholarships and grants, preventing a school-wide historical median from understating the selected student's projected cost.
+- Military paths now estimate the earned Post-9/11 GI Bill from projected service eligibility, school type, annual net tuition, school-location housing, academic years, and books. The estimate is shown as a future education benefit rather than immediate military compensation.
+- The side-by-side area now invites users with one to three scored paths to start another path instead of continuing to show the empty-state message.
+
 - A stronger homepage leads with “Find the best path for your future” and four clear route cards.
 - The questionnaire is presented as a three-step guided flow: route, path details, and money/outcomes.
 - Results include a visual score, debt, and directional 10-year net-value comparison.
