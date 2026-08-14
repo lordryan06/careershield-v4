@@ -129,3 +129,22 @@ $("viewSavedPaths").addEventListener("click",()=>document.querySelector(".compar
 $("restartApp").addEventListener("click",async()=>{if(!window.confirm("Restart CareerShield and permanently clear all saved paths and current selections?"))return;comparisons=[];save();localStorage.removeItem(ASSISTANT_USAGE_KEY);if(window.CareerShieldAccount?.syncPlans)await window.CareerShieldAccount.syncPlans([]).catch(()=>{});window.location.hash="builder-title";window.location.reload()});
 updateSavedProgress();
 window.CareerShieldPlans={get:()=>comparisons.map(plan=>({...plan})),replace:plans=>{comparisons=Array.isArray(plans)?plans.slice(0,4):[];save(false);render();updateSavedProgress()},set:plans=>{comparisons=Array.isArray(plans)?plans.slice(0,4):[];save(true);render();updateSavedProgress()}};
+
+// V4.3 guided builder and richer results
+let builderStage=1;
+const builderStageTwo=["trainingModeField","schoolField","degreeField","residencyField","collegePlanField","providerField","militaryBranchField","militaryTrackField","militaryJobField","careerField"];
+const builderStageThree=["militaryCompensation","tradeEconomics","trainingEconomics","costField","aidField","debtField","durationField","earnWhileField","startingPayField"];
+function applyBuilderStage(stage){builderStage=Math.max(1,Math.min(3,stage));$("pathPicker").classList.toggle("stage-hidden",builderStage!==1);builderStageTwo.forEach(id=>$(id)?.classList.toggle("stage-hidden",builderStage!==2));builderStageThree.forEach(id=>$(id)?.classList.toggle("stage-hidden",builderStage!==3));document.querySelectorAll("[data-progress]").forEach(item=>item.classList.toggle("active",Number(item.dataset.progress)<=builderStage));$("builderBack").hidden=builderStage===1;$("builderNext").hidden=builderStage===3;$("addOption").hidden=builderStage!==3;$("formMessage").textContent=""}
+$("builderNext").addEventListener("click",()=>applyBuilderStage(builderStage+1));
+$("builderBack").addEventListener("click",()=>applyBuilderStage(builderStage-1));
+document.querySelectorAll("[data-home-path]").forEach(button=>button.addEventListener("click",()=>{const path=button.dataset.homePath;setPath(path);showCombinedTraining(path);applyBuilderStage(2);$("builder-title").scrollIntoView({behavior:"smooth",block:"start"})}));
+$("addOption").addEventListener("click",()=>setTimeout(()=>{if(!$("formMessage").textContent)applyBuilderStage(1)},0));
+
+const calculateV43Base=calculate;
+calculate=()=>{const option=calculateV43Base();const t=option.tradeComp,c=option.trainingComp,m=option.militaryComp;let nextAnnual=Number(option.inputs.starting||option.annualMedian||0);if(t)nextAnnual=Number(t.journey||0)*Number(t.hoursWeek||40)*Number(t.weeksYear||50);if(c)nextAnnual=Number(c.success||0)*Number(c.salary||0)+(1-Number(c.success||0))*Number(c.fallback||0);if(m)nextAnnual=Number(option.inputs.civilianStarting||m.annualCash||0);option.tenYearNet=Math.round(Number(option.fiveYearNet||0)+nextAnnual*5.4);return option};
+function tenYearValue(option){if(Number.isFinite(Number(option.tenYearNet)))return Number(option.tenYearNet);const annual=Number(option.inputs?.starting||option.annualMedian||0);return Math.round(Number(option.fiveYearNet||0)+annual*5.4)}
+function renderResultsVisual(){const target=$("resultsVisual"),ranked=[...comparisons].sort((a,b)=>b.score-a.score);target.hidden=!ranked.length;if(!ranked.length)return;const maximum=Math.max(1,...ranked.map(option=>Math.max(0,tenYearValue(option))));target.innerHTML=`<h3>10-year comparison outlook</h3><p>Directional projection using the same path assumptions and a modest earnings-growth allowance. Verify all figures before deciding.</p>${ranked.map(option=>{const value=tenYearValue(option),width=Math.max(3,Math.round(Math.max(0,value)/maximum*100));return`<div class="visual-row"><strong>${escapeHtml(option.savedLabel||option.name)}</strong><div class="visual-bar" aria-label="10-year projected net value ${money(value)}"><i style="width:${width}%"></i></div><div class="visual-stat"><span>Score</span><b>${option.score}/100</b></div><div class="visual-stat"><span>10-year net</span><b>${money(value)}</b></div><div class="visual-stat"><span>Debt</span><b>${money(option.inputs?.debt||0)}</b></div></div>`}).join("")}`}
+const renderV43Base=render;
+render=()=>{renderV43Base();renderResultsVisual()};
+applyBuilderStage(1);
+renderResultsVisual();

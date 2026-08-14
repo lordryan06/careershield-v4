@@ -1,4 +1,12 @@
-# CareerShield V4.2
+# CareerShield V4.3
+
+## V4.3 experience update
+
+- A stronger homepage leads with “Find the best path for your future” and four clear route cards.
+- The questionnaire is presented as a three-step guided flow: route, path details, and money/outcomes.
+- Results include a visual score, debt, and directional 10-year net-value comparison.
+- New How It Works, Students, Parents, Counselors, and official-data trust sections explain the product quickly.
+- The $49.99 report section now lists six concrete deliverables.
 
 ## V4.2 status
 
@@ -46,6 +54,7 @@ Deploy this folder from a Git repository or with the Netlify CLI. In Netlify pro
 - `OPENAI_API_KEY` for the CareerShield Guide
 - `STRIPE_WEBHOOK_SECRET` from the live Stripe webhook endpoint (`whsec_...`)
 - `STRIPE_CHECKOUT_REFERENCE_SECRET`, a private random value of at least 32 characters used to prevent account-reference tampering
+- `STRIPE_PAYMENT_LINK_URL` is optional. When present, checkout uses that Stripe-hosted Payment Link; when removed, checkout automatically returns to the built-in live $49.99 link. This is intended for a short, controlled 50-cent live webhook test.
 
 Then redeploy. Enable Netlify form detection if you want submissions from the `careershield-interest` form.
 
