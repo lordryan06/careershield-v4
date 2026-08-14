@@ -13,11 +13,39 @@ const json = (data, status = 200) => new Response(JSON.stringify(data), {
 
 export default async (request) => {
   if (request.method !== "GET") return json({ error: "Method not allowed" }, 405);
-  const search = new URL(request.url).searchParams.get("search")?.trim();
-  if (!search || search.length < 2) return json({ error: "Enter at least two characters." }, 400);
-  if (search.length > 100) return json({ error: "Search is too long." }, 400);
+  const params = new URL(request.url).searchParams;
+  const search = params.get("search")?.trim();
+  const schoolId = params.get("programs")?.trim();
   const apiKey = process.env.DATA_GOV_API_KEY;
   if (!apiKey) return json({ error: "School data is not configured." }, 503);
+
+  if (schoolId) {
+    if (!/^\d{4,10}$/.test(schoolId)) return json({ error: "Choose a valid school." }, 400);
+    const api = new URL(SCORECARD_URL);
+    api.searchParams.set("api_key", apiKey);
+    api.searchParams.set("id", schoolId);
+    api.searchParams.set("fields", "id,school.name,latest.programs.cip_4_digit");
+    try {
+      const response = await fetch(api, { signal: AbortSignal.timeout(10000) });
+      const data = await response.json().catch(() => ({}));
+      if (!response.ok) return json({ error: "College Scorecard could not load this school’s programs." }, response.status);
+      const row = (data.results || [])[0] || {};
+      const nested = row.latest?.programs?.cip_4_digit;
+      const dotted = row["latest.programs.cip_4_digit"];
+      const raw = Array.isArray(nested) ? nested : Array.isArray(dotted) ? dotted : [];
+      const seen = new Set();
+      const programs = raw.map(item => ({
+        code: String(item.code ?? item.cip_code ?? item["code"] ?? ""),
+        title: String(item.title ?? item.cip_title ?? item["title"] ?? ""),
+        credential: String(item.credential?.title ?? item.credential_title ?? item["credential.title"] ?? "")
+      })).filter(item => item.title && !seen.has(`${item.code}|${item.credential}`) && seen.add(`${item.code}|${item.credential}`));
+      return json({ school: row.school?.name || row["school.name"] || "", programs });
+    } catch {
+      return json({ error: "School program data is temporarily unavailable." }, 502);
+    }
+  }
+  if (!search || search.length < 2) return json({ error: "Enter at least two characters." }, 400);
+  if (search.length > 100) return json({ error: "Search is too long." }, 400);
 
   const api = new URL(SCORECARD_URL);
   api.searchParams.set("api_key", apiKey);
