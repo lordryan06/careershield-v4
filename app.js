@@ -13,7 +13,7 @@ const PAY_GRADES={enlisted:{"E-1":2407.20,"E-2":2697.90,"E-3":2836.80,"E-4":3142
 let activePath="college", selectedSchool=null, selectedCareer=null, selectedMilitary=null, selectedProgram=null, schoolProgramChoices=[], comparisons=readStored();
 
 function readStored(){try{const value=JSON.parse(localStorage.getItem(STORE));return Array.isArray(value)?value.slice(0,4):[]}catch{return[]}}
-function save(){localStorage.setItem(STORE,JSON.stringify(comparisons))}
+function save(sync=true){localStorage.setItem(STORE,JSON.stringify(comparisons));if(sync)window.dispatchEvent(new CustomEvent("careershield:plans-changed",{detail:{plans:comparisons}}))}
 function escapeHtml(value=""){return String(value).replace(/[&<>'"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;","'":"&#39;",'"':"&quot;"}[c]))}
 function debounce(fn,delay=350){let timer;return(...args)=>{clearTimeout(timer);timer=setTimeout(()=>fn(...args),delay)}}
 async function api(url){const response=await fetch(url);const data=await response.json().catch(()=>({}));if(!response.ok)throw new Error(data.error||"The data service could not complete this request.");return data}
@@ -124,7 +124,8 @@ window.addEventListener("resize",hideFloatingInfo);
 
 function updateSavedProgress(){const panel=$("savedProgress");panel.hidden=!comparisons.length;if(!comparisons.length)return;const recent=comparisons.slice(-3).reverse().map(option=>option.name).filter(Boolean);$("savedProgressText").textContent=`${comparisons.length} saved path${comparisons.length===1?"":"s"}${recent.length?` · Recent: ${recent.join(" · ")}`:""}`}
 const saveWithProgress=save;
-save=()=>{saveWithProgress();updateSavedProgress()};
+save=(sync=true)=>{saveWithProgress(sync);updateSavedProgress()};
 $("viewSavedPaths").addEventListener("click",()=>document.querySelector(".comparison").scrollIntoView({behavior:"smooth",block:"start"}));
-$("restartApp").addEventListener("click",()=>{if(!window.confirm("Restart CareerShield and permanently clear all saved paths and current selections on this device?"))return;comparisons=[];localStorage.removeItem(STORE);localStorage.removeItem(ASSISTANT_USAGE_KEY);window.location.hash="builder-title";window.location.reload()});
+$("restartApp").addEventListener("click",async()=>{if(!window.confirm("Restart CareerShield and permanently clear all saved paths and current selections?"))return;comparisons=[];save();localStorage.removeItem(ASSISTANT_USAGE_KEY);if(window.CareerShieldAccount?.syncPlans)await window.CareerShieldAccount.syncPlans([]).catch(()=>{});window.location.hash="builder-title";window.location.reload()});
 updateSavedProgress();
+window.CareerShieldPlans={get:()=>comparisons.map(plan=>({...plan})),replace:plans=>{comparisons=Array.isArray(plans)?plans.slice(0,4):[];save(false);render();updateSavedProgress()}};

@@ -8,6 +8,7 @@
     "dev": "npm run build && npx netlify dev"
   },
   "dependencies": {
+    "@netlify/blobs": "^10.0.0",
     "@netlify/identity": "^1.2.0"
   },
   "devDependencies": {

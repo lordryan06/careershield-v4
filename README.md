@@ -29,8 +29,8 @@ The production brand assets are `careershield-logo.png` for the horizontal navig
 - Mixed paths are ranked on expected financial outcome, time to earnings, debt and upfront cost, employment demand, AI resilience, and career flexibility.
 - Every result exposes all six factor scores and the 5-year earnings estimate behind the comparison.
 - Live College Scorecard school search and O*NET occupation data remain server-side through the existing Netlify Functions.
-- Comparisons remain device-local in browser `localStorage`.
-- Netlify Identity adds email/password account creation, confirmation-link handling, login, and logout. Saved comparisons remain device-local until account storage is added.
+- Comparisons remain available device-local in browser `localStorage` for signed-out visitors.
+- Netlify Identity adds email/password account creation, confirmation-link handling, login, and logout. Signed-in users securely synchronize up to four comparisons through an authenticated Netlify Function and a user-specific Netlify Blobs record.
 - The existing Netlify form, styling system, headers, redirects, and deployment model are preserved.
 - A $49 personalized Decision Report offer uses a Stripe-hosted Payment Link, avoiding a custom payment backend.
 - The CareerShield Guide uses the OpenAI Responses API from a server-side Netlify Function to explain saved comparisons and challenge assumptions without exposing credentials in the browser.

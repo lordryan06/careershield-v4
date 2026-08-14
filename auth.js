@@ -4,6 +4,8 @@ const byId = id => document.getElementById(id);
 const dialog = byId("authDialog");
 const form = byId("authForm");
 let mode = "login";
+let currentUser = null;
+let syncTimer = null;
 
 function message(text, success = false) {
   const target = byId("authMessage");
@@ -25,10 +27,58 @@ function chooseMode(nextMode) {
 }
 
 function showUser(user) {
+  currentUser = user || null;
   const loggedIn = Boolean(user);
   byId("accountButton").textContent = loggedIn ? (user.userMetadata?.full_name || user.email || "My account") : "Log in";
   byId("accountEmail").textContent = loggedIn ? user.email : "";
+  byId("savedProgressTitle").textContent = loggedIn ? "Your recent paths are synced to your account" : "Your recent paths are saved on this device";
   byId("accountMenu").hidden = true;
+}
+
+function storageStatus(text, error = false) {
+  const target = byId("accountStorageStatus");
+  target.textContent = text;
+  target.style.color = error ? "#b42318" : "";
+}
+
+async function plansRequest(method = "GET", plans) {
+  const options = { method, credentials: "same-origin", headers: { accept: "application/json" } };
+  if (method === "PUT") {
+    options.headers["content-type"] = "application/json";
+    options.body = JSON.stringify({ plans });
+  }
+  const response = await fetch("/api/plans", options);
+  const data = await response.json().catch(() => ({}));
+  if (!response.ok) throw new Error(data.error || "Your plans could not be synchronized.");
+  return data;
+}
+
+async function syncPlans(plans = window.CareerShieldPlans?.get?.() || []) {
+  if (!currentUser) return;
+  storageStatus("Saving your comparisons…");
+  try {
+    await plansRequest("PUT", plans);
+    storageStatus("Your comparisons are saved securely to your account.");
+  } catch (error) {
+    storageStatus(error.message, true);
+    throw error;
+  }
+}
+
+async function loadAccountPlans() {
+  if (!currentUser || !window.CareerShieldPlans) return;
+  storageStatus("Loading your saved comparisons…");
+  try {
+    const cloud = await plansRequest();
+    if (Array.isArray(cloud.plans)) {
+      window.CareerShieldPlans.replace(cloud.plans);
+      storageStatus("Your comparisons are synced across your devices.");
+    } else {
+      await syncPlans(window.CareerShieldPlans.get());
+    }
+  } catch (error) {
+    storageStatus(`${error.message} Device copy remains available.`, true);
+  }
 }
 
 async function refreshUser() {
@@ -49,6 +99,13 @@ byId("logoutButton").addEventListener("click", async () => {
   showUser(null);
 });
 
+window.addEventListener("careershield:plans-changed", event => {
+  if (!currentUser) return;
+  clearTimeout(syncTimer);
+  syncTimer = setTimeout(() => syncPlans(event.detail?.plans || []).catch(() => {}), 350);
+});
+window.CareerShieldAccount = { syncPlans };
+
 form.addEventListener("submit", async event => {
   event.preventDefault();
   const email = byId("authEmail").value.trim();
@@ -64,6 +121,7 @@ form.addEventListener("submit", async event => {
     } else {
       const user = await login(email, password);
       showUser(user);
+      await loadAccountPlans();
       dialog.close();
       form.reset();
     }
@@ -88,5 +146,6 @@ async function initializeIdentity() {
     message(error?.message || "The account link could not be completed.");
   }
   await refreshUser();
+  if (currentUser) await loadAccountPlans();
 }
 initializeIdentity();
