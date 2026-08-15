@@ -1,3 +1,4 @@
+import { getStore } from "@netlify/blobs";
 import { getUser, verifyRequestOrigin } from "@netlify/identity";
 import { createReportReference } from "../lib/report-reference.js";
 
@@ -10,6 +11,10 @@ export default async request => {
     verifyRequestOrigin(request);
     const user = await getUser();
     if (!user?.id || !user?.email) return json({ error: "Log in before purchasing a report." }, 401);
+    const plansStore = getStore({ name: "careershield-user-plans", consistency: "strong" });
+    const savedRecord = await plansStore.get(`users/${user.id}`, { type: "json" });
+    const savedPlans = Array.isArray(savedRecord?.plans) ? savedRecord.plans : [];
+    if (!savedPlans.length) return json({ error: "Save and synchronize at least one comparison path before purchasing a report." }, 409);
     const configuredLink = process.env.STRIPE_PAYMENT_LINK_URL || LIVE_PAYMENT_LINK;
     const url = new URL(configuredLink);
     if (url.protocol !== "https:" || url.hostname !== "buy.stripe.com") throw new Error("Invalid Stripe Payment Link.");

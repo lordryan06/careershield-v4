@@ -1,4 +1,14 @@
-# CareerShield V4.3.5
+# CareerShield V4.3.6
+
+## V4.3.6 checkout-safety release
+
+- Removes direct Stripe URLs from both report buttons so checkout cannot bypass the application flow when client-side scripting fails.
+- Requires a logged-in user and at least one server-synchronized saved path inside the checkout function before returning the Stripe URL.
+- Clarifies the CareerShield analyst review step without claiming unverified professional credentials.
+- Adds two clearly illustrative sample report pages near the purchase section.
+- Preserves the compact mobile AI Guide treatment from V4.3.5.
+
+The Open Graph image remains root-relative until the final branded production domain is known. Replace both the canonical URL and `og:image` with absolute production URLs before meaningful paid traffic, then test them in social preview tools.
 
 ## V4.3.5 launch-readiness release
 
