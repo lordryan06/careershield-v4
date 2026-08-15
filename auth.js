@@ -221,10 +221,18 @@ document.querySelectorAll(".report-checkout-link").forEach(link => link.addEvent
     message("Log in first so Stripe can attach the purchase to your CareerShield account.");
     return;
   }
+  const plans = window.CareerShieldPlans?.get?.() || [];
+  if (!plans.length) {
+    if (dashboard.open) dashboard.close();
+    window.alert("Build and save at least one comparison path before purchasing a report.");
+    document.getElementById("builder-title")?.scrollIntoView({ behavior: "smooth", block: "start" });
+    return;
+  }
   const original = link.textContent;
   link.setAttribute("aria-disabled", "true");
   link.textContent = "Opening secure checkout…";
   try {
+    await syncPlans(plans);
     const response = await fetch("/api/report-checkout", { method: "POST", credentials: "same-origin", headers: { accept: "application/json" } });
     const data = await response.json().catch(() => ({}));
     if (!response.ok || !data.url) throw new Error(data.error || "Checkout could not be opened.");

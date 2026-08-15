@@ -1,5 +1,5 @@
 const $ = id => document.getElementById(id);
-const APP_VERSION = "4.3.4";
+const APP_VERSION = "4.3.5";
 const money = value => value == null ? "Not available" : new Intl.NumberFormat("en-US", { style:"currency", currency:"USD", maximumFractionDigits:0 }).format(value);
 const clamp = value => Math.max(0, Math.min(100, Math.round(value)));
 const get = (obj, path) => path.split(".").reduce((v, key) => v?.[key], obj) ?? obj?.[path] ?? null;
@@ -200,7 +200,7 @@ const renderBeforeInvestmentAnalysis=render;
 render=()=>{renderBeforeInvestmentAnalysis();renderFinancialTimeline();renderShareComparison()};
 const navPositioning=document.querySelector(".nav-actions>span");if(navPositioning)navPositioning.textContent="Career investment analysis";
 const reportIntro=$("report-title")?.nextElementSibling;if(reportIntro)reportIntro.textContent="A human-reviewed decision report built from your saved comparison—not a generic download. Introductory pricing is being validated with real customers.";
-document.title=`CareerShield V${APP_VERSION} — Career investment analysis`;
+document.title="CareerShield — Career investment analysis";
 render();
 
 // Allow direct navigation between all guided-builder stages.
@@ -211,8 +211,8 @@ applyBuilderStage(builderStage);
 $("startAnotherPath").addEventListener("click",()=>{applyBuilderStage(1);$("builder-title").scrollIntoView({behavior:"smooth",block:"start"})});
 
 // Keep visible product version labels aligned with each release.
-document.title=`CareerShield V${APP_VERSION} — Career investment analysis`;
-const footerVersion=document.querySelector("footer span");if(footerVersion)footerVersion.textContent=`CareerShield V${APP_VERSION} paid beta`;
+document.title="CareerShield — Career investment analysis";
+const footerVersion=document.querySelector("footer span");if(footerVersion)footerVersion.textContent="CareerShield";
 
 // Show program provenance in comparisons and the dedicated printable decision plan.
 const cardBeforeProgramLabels=card;
@@ -221,4 +221,19 @@ const renderPlanBeforeProgramLabels=renderPlan;
 renderPlan=ranked=>{renderPlanBeforeProgramLabels(ranked);const best=ranked[0];if(!best||best.path!=="college")return;const lead=$("planSection").querySelector(".print-plan-lead");if(!lead)return;const note=document.createElement("div");note.className="program-plan-note";note.innerHTML=`<strong>Degree or program</strong><span>${escapeHtml(best.program||best.degree||"Selected degree or program")}</span>${best.programSource==="user_entered"?'<b class="manual-program-badge">User-entered program, verify with school</b>':''}${best.officialProgramUrl?`<a href="${escapeHtml(best.officialProgramUrl)}" target="_blank" rel="noopener">Saved official program webpage</a>`:""}`;lead.after(note)};
 const renderPlanBeforeConfidence=renderPlan;
 renderPlan=ranked=>{renderPlanBeforeConfidence(ranked);const best=ranked[0],section=$("planSection");if(!best||!section)return;const confidence=best.dataConfidence||dataConfidence(best),timeline=timelineFor(best),block=document.createElement("section");block.className="print-plan-section print-confidence";block.innerHTML=`<h3>10-year financial position and Data Confidence</h3><p><strong>Age ${best.startAge||18}:</strong> ${money(timeline[0].position)} → <strong>Age ${best.endAge||28}:</strong> ${money(timeline.at(-1).position)}</p><p><strong>${confidence.label} confidence (${confidence.score}/100).</strong> Official: ${escapeHtml(confidence.official.join("; ")||"none captured")}. User-entered: ${escapeHtml(confidence.entered.join("; "))}. Verify: ${escapeHtml(confidence.verify.join("; "))}.</p>`;section.querySelector(".print-actions")?.before(block)};
+render();
+
+// Launch-readiness presentation and proof.
+const calculateBeforeLaunchReadiness=calculate;
+calculate=()=>{const option=calculateBeforeLaunchReadiness();option.dataRetrievedAt=new Date().toISOString();return option};
+const cardBeforeSourceDates=card;
+card=(option,rank)=>{const html=cardBeforeSourceDates(option,rank),date=option.dataRetrievedAt?new Date(option.dataRetrievedAt).toLocaleDateString("en-US",{year:"numeric",month:"short",day:"numeric"}):"not recorded for this saved path";return html.replace("Official/public source link. Verify costs, eligibility, pay, and deadlines directly.",`Official/public source link · Data accessed ${escapeHtml(date)}. Verify costs, eligibility, pay, and deadlines directly.`)};
+const builder=document.querySelector(".builder"),hero=document.querySelector(".hero");if(builder&&hero){builder.classList.add("landing-builder");hero.after(builder)}
+const homeLogo=document.querySelector(".nav .brand");if(homeLogo)homeLogo.href="/";
+const methodKicker=document.querySelector(".method .step");if(methodKicker)methodKicker.textContent="HOW CAREERSHIELD RANKS PATHS";
+const combinedRoute=document.querySelector('.path-choice[data-path="trade"]');if(combinedRoute){combinedRoute.querySelector("strong").textContent="Trades & certifications";combinedRoute.querySelector("small").textContent="Apprenticeship, certificate, or credential"}
+const trustGrid=document.querySelector(".trust-grid");if(trustGrid)trustGrid.innerHTML='<a href="https://collegescorecard.ed.gov/data/" target="_blank" rel="noopener"><b>College Scorecard</b>U.S. Department of Education ↗</a><a href="https://www.onetcenter.org/web_services.html" target="_blank" rel="noopener"><b>O*NET Web Services</b>U.S. Department of Labor ↗</a><a href="https://www.dfas.mil/militarymembers/payentitlements/Pay-Tables/" target="_blank" rel="noopener"><b>DFAS & DoD</b>Military pay, BAS, and BAH ↗</a><a href="https://www.va.gov/education/about-gi-bill-benefits/post-9-11/" target="_blank" rel="noopener"><b>VA guidance</b>Education-benefit verification ↗</a>';
+const sampleData={college:{label:"State university nursing",score:76,position:"$401,000",downside:"Higher borrowing or delayed graduation can materially reduce the 10-year position.",assumptions:["4-year public program","$52,000 net education cost","$32,000 expected debt","$68,000 first-year nursing earnings"],factors:[78,45,52,90,82,77]},trade:{label:"Electrician apprenticeship",score:84,position:"$516,000",downside:"Fewer paid hours, slower wage progression, or program non-completion reduce the advantage.",assumptions:["4-year paid apprenticeship","$20 starting hourly wage","$42 journey-level wage","$4,000 tools and classroom cost"],factors:[91,96,94,85,92,76]},military:{label:"Air Force cyber",score:81,position:"$468,000",downside:"Specialty availability, assignment, eligibility, and benefit usage must be confirmed in writing.",assumptions:["4-year service commitment","E-1 starting basic pay","Illustrative housing and food allowances","Civilian cyber transition after service"],factors:[86,100,98,82,74,88]}};
+function renderSample(key){const sample=sampleData[key],names=["Financial Outcome","Time to Earnings","Debt / Upfront Cost","Employment Demand","AI Resilience","Career Flexibility"],target=$("sampleResult");target.innerHTML=`<div class="sample-score"><span>ILLUSTRATIVE CAREERSHIELD SCORE</span><strong>${sample.score}<small>/100</small></strong><b>${sample.position} projected position at age 28</b></div><div class="sample-details"><h3>${sample.label}</h3><div class="sample-assumptions"><strong>Example assumptions</strong><ul>${sample.assumptions.map(x=>`<li>${x}</li>`).join("")}</ul></div><div class="sample-factors">${names.map((name,i)=>`<span><b>${name}</b><i><em style="width:${sample.factors[i]}%"></em></i><strong>${sample.factors[i]}</strong></span>`).join("")}</div><div class="sample-downside"><strong>Downside scenario</strong><p>${sample.downside}</p></div><small>Demonstration only. Actual results depend on the school, program, location, occupation, benefits, and assumptions entered.</small></div>`;document.querySelectorAll("[data-sample]").forEach(button=>button.classList.toggle("active",button.dataset.sample===key))}
+document.querySelectorAll("[data-sample]").forEach(button=>button.addEventListener("click",()=>renderSample(button.dataset.sample)));renderSample("college");
 render();

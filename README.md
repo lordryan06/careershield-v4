@@ -1,4 +1,14 @@
-# CareerShield V4.3.4
+# CareerShield V4.3.5
+
+## V4.3.5 launch-readiness release
+
+- Removes public release-number and paid-beta language.
+- Moves the path builder directly below the hero and clarifies the free, account, and paid-report sequence.
+- Adds an interactive three-path example with assumptions, six-factor scores, 10-year outcomes, and downside cases.
+- Requires login, at least one saved path, and successful synchronization before Stripe checkout.
+- Adds a Netlify support form for product, privacy, report, and refund requests.
+- Adds linked primary sources and source-access dates on newly scored paths.
+- Adds Open Graph metadata, a canonical root, a clean home link, clearer certification terminology, and a compact mobile AI Guide button.
 
 ## V4.3.4 career-investment release
 
