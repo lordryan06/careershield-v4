@@ -1,4 +1,22 @@
-# CareerShield V4.3.7
+# CareerShield V4.3.9
+
+## V4.3.9 simplified-hero release
+
+- Removes the redundant illustrative age card from the hero; the full interactive example remains below.
+- Removes pricing, account, and proof-pill clutter from the first screen.
+- Tightens the headline and supporting sentence around the ten-year financial comparison.
+- Keeps two clear actions and one reassurance line: free comparison of up to four paths with no account required.
+- Preserves the report offer, review disclosures, operational forms, and all builder functionality.
+
+## V4.3.8 fillable-operations release
+
+- Adds a seven-page fillable PDF Personalized Decision Report under `operations/`.
+- Adds a four-page fillable PDF Report Review Checklist under `operations/`.
+- The report contains 38 interactive fields; the checklist contains 42 canonical fields and 43 widgets, including checkboxes and a final-status choice.
+- Both PDFs were programmatically filled and reopened to validate stored values and appearance streams, then every page was rendered for visual inspection.
+- Keep blank forms with the private operational materials. Never commit completed customer copies to a public repository.
+
+The Markdown operational files remain the editable source definitions. The PDFs are the working Adobe forms used for fulfillment.
 
 ## V4.3.7 report-definition release
 
