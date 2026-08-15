@@ -9,7 +9,7 @@
 - Adds paid-report review requirements for BLS, official catalogs, IPEDS, Credential Engine, Apprenticeship.gov/RAPIDS, VA data, CareerOneStop, and state licensing boards when applicable.
 - Updates the fillable report’s evidence page and expands the fillable review checklist to five pages with 52 canonical fields and 53 widgets.
 
-This release establishes the evidence model; it does not claim that BLS, IPEDS, Credential Engine, RAPIDS, VA open data, CareerOneStop, or state-board integrations are live unless a record explicitly has `status: official` and a captured source URL/date.
+This release establishes the evidence model and automatically enriches newly added paths with current BLS OEWS occupation profiles. College paths also retrieve the NCES/IPEDS College Navigator record by UNITID and query the VA GI Bill Comparison Tool's public school search. Certification/training paths query Credential Engine when its API key is configured. A successful source request is stored with its URL and access date; possible matches are never presented as proof that a specific program, credential, or benefit is approved.
 
 ## V4.3.9 simplified-hero release
 
@@ -127,6 +127,7 @@ Deploy this folder from a Git repository or with the Netlify CLI. In Netlify pro
 
 - `DATA_GOV_API_KEY` for College Scorecard
 - `ONET_API_KEY` for O*NET Web Services v2
+- `CREDENTIAL_ENGINE_API_KEY` for automatic Credential Engine Registry matching (required only for that source; request Search API access from Credential Engine)
 - `OPENAI_API_KEY` for the CareerShield Guide
 - `STRIPE_WEBHOOK_SECRET` from the live Stripe webhook endpoint (`whsec_...`)
 - `STRIPE_CHECKOUT_REFERENCE_SECRET`, a private random value of at least 32 characters used to prevent account-reference tampering
@@ -154,7 +155,7 @@ The checkout endpoint requires a valid Netlify Identity session, locks the Strip
 
 ## Local development
 
-Install Node.js and the Netlify CLI, authenticate, and run `npm run dev`. Opening `index.html` directly displays the interface, but live searches require the Netlify Functions runtime and the two environment variables.
+Install Node.js and the Netlify CLI, authenticate, and run `npm run dev`. Opening `index.html` directly displays the interface, but live searches and automatic evidence retrieval require the Netlify Functions runtime. College Scorecard and O*NET require their listed keys; Credential Engine is gracefully labeled `configuration_required` until its key is added.
 
 ## Scoring model
 
