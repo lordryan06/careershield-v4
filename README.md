@@ -18,7 +18,7 @@
 
 - College selection now loads that institution's reported degree plans from College Scorecard field-of-study records.
 - Selecting a degree plan loads a dependent target-career dropdown through the official O*NET education (CIP) crosswalk.
-- College Scorecard programs are suggestions, not a closed list. Missing programs can be entered in normal wording, paired with an optional official webpage, and mapped through the same O*NET target-career dropdown used by listed programs. Manual programs are labeled `User-entered program, verify with school` in saved comparisons, AI Guide context, print plans, and report data.
+- College Scorecard programs are suggestions, not a closed list. Missing programs can be entered in normal wording and mapped through the same O*NET target-career dropdown used by listed programs. The required official webpage field auto-populates from the selected school’s College Scorecard website and can be replaced with a specific program page. Manual programs are labeled `User-entered program, verify with school` in saved comparisons, AI Guide context, print plans, and report data.
 - Skilled trades, apprenticeships, certifications, and technical training now share one clearer `Trades & training` route with a training-type selector.
 - Trades and training use a dropdown backed by the complete O*NET occupation catalog.
 - Military specialties remain filtered by service branch and enlisted, commissioned-officer, or warrant-officer track using the O*NET military crosswalk.

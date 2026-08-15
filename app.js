@@ -1,5 +1,5 @@
 const $ = id => document.getElementById(id);
-const APP_VERSION = "4.3.2";
+const APP_VERSION = "4.3.3";
 const money = value => value == null ? "Not available" : new Intl.NumberFormat("en-US", { style:"currency", currency:"USD", maximumFractionDigits:0 }).format(value);
 const clamp = value => Math.max(0, Math.min(100, Math.round(value)));
 const get = (obj, path) => path.split(".").reduce((v, key) => v?.[key], obj) ?? obj?.[path] ?? null;
@@ -63,7 +63,9 @@ militaryInputs=()=>{const monthlyBasic=Number($("monthlyBasicPay").value||0),hou
 const calculateV411Base=calculate,setPathV411Base=setPath;
 const selectedDegreePlan=()=>manualProgramMode?"":$("collegePlan").value.trim();
 function validOfficialProgramUrl(){const value=$("manualProgramUrl").value.trim();if(!value)return"";try{const url=new URL(value);return /^https?:$/.test(url.protocol)?url.href:""}catch{return""}}
-function setManualProgramMode(manual){manualProgramMode=manual;$("manualProgramFields").hidden=!manual;$("manualProgramToggle").hidden=manual;$("collegePlan").hidden=manual;$("collegePlanHint").hidden=manual;selectedProgram=null;selectedCareer=null;$("careerSelected").hidden=true;if(manual){fillCareerDropdown([],"Enter a program name to load matching careers");$("targetCareerHint").textContent="Enter the program name above, then choose the closest matching O*NET career from this dropdown."}else{$("manualProgramName").value="";$("manualProgramUrl").value="";loadCollegeCareers()}}
+function selectedSchoolOfficialUrl(){const value=String(get(selectedSchool,"school.school_url")||"").trim();if(!value)return"";try{return new URL(/^https?:\/\//i.test(value)?value:`https://${value}`).href}catch{return""}}
+function populateOfficialProgramUrl(){if(manualProgramMode)$("manualProgramUrl").value=selectedSchoolOfficialUrl()}
+function setManualProgramMode(manual){manualProgramMode=manual;$("manualProgramFields").hidden=!manual;$("manualProgramToggle").hidden=manual;$("collegePlan").hidden=manual;$("collegePlanHint").hidden=manual;selectedProgram=null;selectedCareer=null;$("careerSelected").hidden=true;if(manual){populateOfficialProgramUrl();fillCareerDropdown([],"Enter a program name to load matching careers");$("targetCareerHint").textContent="Enter the program name above, then choose the closest matching O*NET career from this dropdown."}else{$("manualProgramName").value="";$("manualProgramUrl").value="";loadCollegeCareers()}}
 $("manualProgramToggle").addEventListener("click",()=>setManualProgramMode(true));
 $("useScorecardPrograms").addEventListener("click",()=>setManualProgramMode(false));
 const loadManualProgramCareers=debounce(async()=>{if(!manualProgramMode)return;const name=$("manualProgramName").value.trim();selectedCareer=null;$("careerSelected").hidden=true;if(name.length<2)return fillCareerDropdown([],"Enter at least two letters to find matching careers");const select=$("targetCareerSelect");select.disabled=true;select.innerHTML='<option>Loading matching O*NET careers…</option>';try{const {results}=await api(`/api/careers?search=${encodeURIComponent(name)}`);fillCareerDropdown(results,"Choose the closest matching target career")}catch(error){fillCareerDropdown([],"Career options unavailable");$("targetCareerHint").textContent=error.message}},350);
@@ -81,7 +83,7 @@ document.querySelectorAll('.path-choice:not([data-path="trade"])').forEach(butto
 const setPathV42Base=setPath;
 setPath=(path,initial=false)=>{setPathV42Base(path,initial);showCombinedTraining(path);if(path==="college"){$("careerLabel").textContent="Target career";$("careerSearch").placeholder="Type the career this degree should lead to"}$("collegePlanField").hidden=path!=="college"};
 $("schoolSearch").addEventListener("input",()=>{const select=$("collegePlan");select.disabled=true;select.innerHTML='<option value="">Select a school first</option>';$("collegePlanHint").textContent="Federal data can lag or group programs differently. Use these as suggestions, or add a program manually."});
-$("addOption").addEventListener("click",event=>{if(activePath!=="college")return;if(manualProgramMode&&!$("manualProgramName").value.trim()){event.stopImmediatePropagation();$("formMessage").textContent="Enter the degree or program name before continuing.";return}if(manualProgramMode&&$("manualProgramUrl").value.trim()&&!validOfficialProgramUrl()){event.stopImmediatePropagation();$("formMessage").textContent="Enter a complete http:// or https:// program webpage URL, or leave it blank.";return}if(!manualProgramMode&&!selectedDegreePlan()){event.stopImmediatePropagation();$("formMessage").textContent="Choose a federal program suggestion or select ‘My program isn’t listed.’";return}if(!selectedCareer){event.stopImmediatePropagation();$("formMessage").textContent="Choose the closest matching target career from the O*NET dropdown."}},true);
+$("addOption").addEventListener("click",event=>{if(activePath!=="college")return;if(manualProgramMode&&!$("manualProgramName").value.trim()){event.stopImmediatePropagation();$("formMessage").textContent="Enter the degree or program name before continuing.";return}if(manualProgramMode&&!validOfficialProgramUrl()){event.stopImmediatePropagation();$("formMessage").textContent="An official school or program webpage is required. Enter a complete http:// or https:// URL.";return}if(!manualProgramMode&&!selectedDegreePlan()){event.stopImmediatePropagation();$("formMessage").textContent="Choose a federal program suggestion or select ‘My program isn’t listed.’";return}if(!selectedCareer){event.stopImmediatePropagation();$("formMessage").textContent="Choose the closest matching target career from the O*NET dropdown."}},true);
 
 const ASSISTANT_USAGE_KEY="careershield-v4-ai-usage",ASSISTANT_DAILY_LIMIT=10;
 function assistantUsage(){const day=new Date().toISOString().slice(0,10);try{const saved=JSON.parse(localStorage.getItem(ASSISTANT_USAGE_KEY));return saved?.day===day?{day,count:Number(saved.count)||0}:{day,count:0}}catch{return{day,count:0}}}
@@ -174,6 +176,7 @@ schoolTuition=()=>{schoolTuitionBeforeDebtSync();syncCollegeDebtToCost()};
 [$("cost"),$("grants")].forEach(control=>control.addEventListener("input",syncCollegeDebtToCost));
 [$("degree"),$("residency"),$("collegePlan")].forEach(control=>control.addEventListener("change",()=>setTimeout(syncCollegeDebtToCost,0)));
 $("schoolResults").addEventListener("click",event=>{if(event.target.closest("button.result"))setTimeout(syncCollegeDebtToCost,0)});
+$("schoolResults").addEventListener("click",event=>{if(event.target.closest("button.result"))setTimeout(populateOfficialProgramUrl,0)});
 document.querySelectorAll(".path-choice").forEach(button=>button.addEventListener("click",()=>{$("debt").readOnly=button.dataset.path==="college";if(button.dataset.path==="college")setTimeout(syncCollegeDebtToCost,0)}));
 $("debt").readOnly=activePath==="college";
 
