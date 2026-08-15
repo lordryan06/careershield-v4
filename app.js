@@ -246,8 +246,11 @@ function mergeAutomaticEvidence(option,result){option.liveEvidence=result;option
 async function retrieveAutomaticEvidence(option){try{const response=await fetch("/api/evidence",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({path:option.path,soc:option.career?.code,unitId:option.unitId,schoolName:option.path==="college"?option.name:"",program:option.program||option.trainingComp?.type,provider:option.name})});const result=await response.json();if(!response.ok)throw new Error(result.error||"Evidence retrieval failed");mergeAutomaticEvidence(option,result);save();render()}catch(error){option.evidenceRetrievalError=error.message;save();render()}}
 $("addOption").addEventListener("click",()=>{const option=comparisons.at(-1);if(!option||option.evidenceRequestedAt)return;option.evidenceRequestedAt=new Date().toISOString();$("formMessage").textContent="Path added. Retrieving official BLS and applicable education records…";retrieveAutomaticEvidence(option)});
 
-// Make the free-product button describe where it will take the customer.
-function updateFreeComparisonButton(){const button=document.querySelector('.pricing-card a[href="#builder-title"],.pricing-card a[href="#featured"]');if(!button)return;const hasComparison=comparisons.length>0;button.textContent=hasComparison?"View my free comparison":"Start free comparison";button.href=hasComparison?"#featured":"#builder-title"}
+// Turn the free tier into a tangible downloadable comparison card.
+const freeComparisonButton=document.querySelector('.pricing-card a[href="#builder-title"]');
+const freeTierList=freeComparisonButton?.closest(".pricing-card")?.querySelector("ul");if(freeTierList&&!freeTierList.textContent.includes("Downloadable"))freeTierList.insertAdjacentHTML("beforeend","<li>Downloadable CareerShield comparison card</li>");
+function updateFreeComparisonButton(){if(!freeComparisonButton)return;const hasComparison=comparisons.length>0;freeComparisonButton.textContent=hasComparison?"Download free comparison card":"Start free comparison";freeComparisonButton.href=hasComparison?"#download-free-comparison":"#builder-title"}
+freeComparisonButton?.addEventListener("click",event=>{if(!comparisons.length)return;event.preventDefault();downloadShareCard([...comparisons].sort((a,b)=>tenYearValue(b)-tenYearValue(a)))});
 const renderBeforeFreeComparisonButton=render;
 render=()=>{renderBeforeFreeComparisonButton();updateFreeComparisonButton()};
 updateFreeComparisonButton();
