@@ -2,8 +2,6 @@
 
 ## V4.3 experience update
 
-- The numbered Route, Path details, and Money & outcome progress controls are now clickable for direct navigation while preserving entered information.
-- Print My Plan now produces a dedicated Career Decision Plan instead of printing the surrounding website. It includes the leading recommendation, key money figures, factor scores, all compared paths, next steps, assumptions, and official data sources.
 - College debt now defaults to the full estimated tuition remaining after entered scholarships and grants, preventing a school-wide historical median from understating the selected student's projected cost.
 - Military paths now estimate the earned Post-9/11 GI Bill from projected service eligibility, school type, annual net tuition, school-location housing, academic years, and books. The estimate is shown as a future education benefit rather than immediate military compensation.
 - The side-by-side area now invites users with one to three scored paths to start another path instead of continuing to show the empty-state message.
@@ -18,6 +16,7 @@
 
 - College selection now loads that institution's reported degree plans from College Scorecard field-of-study records.
 - Selecting a degree plan loads a dependent target-career dropdown through the official O*NET education (CIP) crosswalk.
+- College Scorecard programs are suggestions rather than a closed list. If a current program is missing, users can enter its exact official name, optionally save its official webpage URL, and select the closest O*NET occupation for scoring. These paths are explicitly labeled `User-entered program, verify with school` throughout saved comparisons, AI Guide context, print plans, and report data.
 - Skilled trades, apprenticeships, certifications, and technical training now share one clearer `Trades & training` route with a training-type selector.
 - Trades and training use a dropdown backed by the complete O*NET occupation catalog.
 - Military specialties remain filtered by service branch and enlisted, commissioned-officer, or warrant-officer track using the O*NET military crosswalk.
