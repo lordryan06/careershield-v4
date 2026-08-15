@@ -199,7 +199,7 @@ card=(option,rank)=>{const confidence=option.dataConfidence||dataConfidence(opti
 const renderBeforeInvestmentAnalysis=render;
 render=()=>{renderBeforeInvestmentAnalysis();renderFinancialTimeline();renderShareComparison()};
 const navPositioning=document.querySelector(".nav-actions>span");if(navPositioning)navPositioning.textContent="Career investment analysis";
-const reportIntro=$("report-title")?.nextElementSibling;if(reportIntro)reportIntro.textContent="A human-reviewed decision report built from your saved comparison—not a generic download. Introductory pricing is being validated with real customers.";
+const reportIntro=$("report-title")?.nextElementSibling;if(reportIntro)reportIntro.textContent="AI generates the report from your saved comparison. A CareerShield team member then completes a standardized quality-assurance review before delivery. Introductory pricing is being validated with real customers.";
 document.title="CareerShield — Career investment analysis";
 render();
 

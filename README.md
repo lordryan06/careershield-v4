@@ -1,4 +1,14 @@
-# CareerShield V4.3.6
+# CareerShield V4.3.7
+
+## V4.3.7 report-definition release
+
+- Defines the paid report as AI-generated analysis followed by standardized CareerShield quality assurance.
+- Explains the reviewer’s limited role and avoids unsupported expert or professional-advice claims.
+- Adds `REPORT-TEMPLATE.md` as the required report structure.
+- Adds `REPORT-REVIEW-CHECKLIST.md` as the mandatory review and delivery record.
+- Keeps the secure login, synchronized-plan, and server-side checkout gates from V4.3.6.
+
+Do not deliver a paid report until every required checklist item has been reviewed and the reviewer has signed the final section.
 
 ## V4.3.6 checkout-safety release
 
