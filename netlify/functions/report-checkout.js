@@ -15,10 +15,25 @@ export default async request => {
     const savedRecord = await plansStore.get(`users/${user.id}`, { type: "json" });
     const savedPlans = Array.isArray(savedRecord?.plans) ? savedRecord.plans : [];
     if (!savedPlans.length) return json({ error: "Save and synchronize at least one comparison path before purchasing a report." }, 409);
-    const configuredLink = process.env.STRIPE_PAYMENT_LINK_URL || LIVE_PAYMENT_LINK;
+    const body = await request.json().catch(() => ({}));
+    const product = String(body.product || "reviewed_report");
+    const products = {
+      deep_analysis: process.env.DEEP_ANALYSIS_PAYMENT_LINK_URL,
+      reviewed_report: process.env.STRIPE_PAYMENT_LINK_URL || LIVE_PAYMENT_LINK,
+      human_review_upgrade: process.env.HUMAN_REVIEW_UPGRADE_PAYMENT_LINK_URL
+    };
+    if (!(product in products)) return json({ error: "Choose a valid CareerShield product." }, 400);
+    if (product === "human_review_upgrade") {
+      const orderStore = getStore({ name: "careershield-report-orders", consistency: "strong" });
+      const orderRecord = await orderStore.get(`users/${user.id}`, { type: "json" });
+      const eligible = (orderRecord?.orders || []).some(order => order.product === "deep_analysis" && order.status === "purchased");
+      if (!eligible) return json({ error: "Purchase Deep Analysis before using the human-review upgrade price." }, 409);
+    }
+    const configuredLink = products[product];
+    if (!configuredLink) return json({ error: `${product === "deep_analysis" ? "Deep Analysis" : "Human-review upgrade"} checkout is not configured yet.` }, 503);
     const url = new URL(configuredLink);
     if (url.protocol !== "https:" || url.hostname !== "buy.stripe.com") throw new Error("Invalid Stripe Payment Link.");
-    url.searchParams.set("client_reference_id", createReportReference(user.id));
+    url.searchParams.set("client_reference_id", createReportReference(user.id, product));
     url.searchParams.set("locked_prefilled_email", user.email);
     return json({ url: url.toString() });
   } catch (error) {

@@ -8,17 +8,18 @@ const secret = () => {
 
 const signature = payload => createHmac("sha256", secret()).update(payload).digest("hex");
 
-export function createReportReference(userId) {
+export function createReportReference(userId, product = "reviewed_report") {
+  if (!/^(deep_analysis|reviewed_report|human_review_upgrade)$/.test(product)) throw new Error("Invalid checkout product.");
   const issued = Date.now().toString(36);
-  const payload = `${userId}.${issued}`;
-  return `${userId}_${issued}_${signature(payload)}`;
+  const payload = `${userId}.${product}.${issued}`;
+  return `${userId}_${product}_${issued}_${signature(payload)}`;
 }
 
 export function verifyReportReference(reference = "") {
-  const match = String(reference).match(/^([A-Za-z0-9-]+)_([0-9a-z]+)_([a-f0-9]{64})$/);
+  const match = String(reference).match(/^([A-Za-z0-9-]+)_(deep_analysis|reviewed_report|human_review_upgrade)_([0-9a-z]+)_([a-f0-9]{64})$/);
   if (!match) return null;
-  const [, userId, issued, supplied] = match;
-  const expected = signature(`${userId}.${issued}`);
+  const [, userId, product, issued, supplied] = match;
+  const expected = signature(`${userId}.${product}.${issued}`);
   const valid = timingSafeEqual(Buffer.from(supplied, "hex"), Buffer.from(expected, "hex"));
-  return valid ? { userId, issued } : null;
+  return valid ? { userId, product, issued } : null;
 }

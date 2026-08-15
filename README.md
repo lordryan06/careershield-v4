@@ -1,4 +1,15 @@
-# CareerShield V4.4.0
+# CareerShield V4.4.1
+
+## V4.4.1 paid product ladder
+
+- Adds a highlighted $9.99 instant CareerShield Deep Analysis after the free comparison.
+- Keeps the $49.99 Human-Reviewed Decision Report as the premium product.
+- Adds an eligibility-checked $39.99 human-review upgrade for customers who already purchased Deep Analysis.
+- Requires login and at least one synchronized saved path before every checkout.
+- Distinguishes products in signed Stripe references and webhook order records.
+- Generates Deep Analysis only after a verified paid webhook order, saves the result to the customer's account, and returns the saved result on later requests.
+- Covers scenarios, break-even points, red flags, material assumptions, ranking reversals, personalized questions, next actions, and Data Confidence.
+- Describes official-source matches as evidence to confirm, not conclusive verification.
 
 ## V4.4.0 evidence-foundation release
 
@@ -132,6 +143,10 @@ Deploy this folder from a Git repository or with the Netlify CLI. In Netlify pro
 - `STRIPE_WEBHOOK_SECRET` from the live Stripe webhook endpoint (`whsec_...`)
 - `STRIPE_CHECKOUT_REFERENCE_SECRET`, a private random value of at least 32 characters used to prevent account-reference tampering
 - `STRIPE_PAYMENT_LINK_URL` is optional. When present, checkout uses that Stripe-hosted Payment Link; when removed, checkout automatically returns to the built-in live $49.99 link. This is intended for a short, controlled 50-cent live webhook test.
+- `DEEP_ANALYSIS_PAYMENT_LINK_URL` must be the Stripe Payment Link for the $9.99 Deep Analysis product.
+- `HUMAN_REVIEW_UPGRADE_PAYMENT_LINK_URL` must be the Stripe Payment Link for the $39.99 upgrade available after a verified Deep Analysis purchase.
+
+Configure all three Stripe Payment Links to use the same webhook endpoint. The checkout function attaches the signed account and product reference automatically; never place Stripe secret keys or webhook secrets in GitHub.
 
 Then redeploy. Enable Netlify form detection if you want submissions from the `careershield-interest` form.
 

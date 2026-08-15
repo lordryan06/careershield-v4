@@ -1290,7 +1290,7 @@
       byId("erasePlanData").disabled = false;
     }
   });
-  document.querySelectorAll(".report-checkout-link").forEach((link) => link.addEventListener("click", async (event) => {
+  document.querySelectorAll(".product-checkout-link").forEach((link) => link.addEventListener("click", async (event) => {
     event.preventDefault();
     if (!currentUser2) {
       if (dashboard.open) dashboard.close();
@@ -1311,7 +1311,7 @@
     link.textContent = "Opening secure checkout\u2026";
     try {
       await syncPlans(plans);
-      const response = await fetch("/api/report-checkout", { method: "POST", credentials: "same-origin", headers: { accept: "application/json" } });
+      const response = await fetch("/api/report-checkout", { method: "POST", credentials: "same-origin", headers: { accept: "application/json", "content-type": "application/json" }, body: JSON.stringify({ product: link.dataset.product || "reviewed_report" }) });
       const data = await response.json().catch(() => ({}));
       if (!response.ok || !data.url) throw new Error(data.error || "Checkout could not be opened.");
       window.location.assign(data.url);
@@ -1323,6 +1323,44 @@
       link.textContent = original;
     }
   }));
+  byId("generateDeepAnalysis").addEventListener("click", async () => {
+    if (!currentUser2) {
+      chooseMode("login");
+      dialog.showModal();
+      message("Log in to open your purchased Deep Analysis.");
+      return;
+    }
+    const button = byId("generateDeepAnalysis");
+    const viewer = byId("deepAnalysisViewer");
+    const content = byId("deepAnalysisContent");
+    if (!dashboard.open) {
+      renderDashboard();
+      dashboard.showModal();
+    }
+    button.disabled = true;
+    button.textContent = "Preparing analysis\xE2\u20AC\xA6";
+    viewer.hidden = false;
+    content.textContent = "CareerShield is stress-testing your saved comparison\xE2\u20AC\xA6";
+    try {
+      const response = await fetch("/api/deep-analysis", { method: "POST", credentials: "same-origin", headers: { accept: "application/json", "content-type": "application/json" }, body: "{}" });
+      const data = await response.json().catch(() => ({}));
+      if (response.status === 202) {
+        content.textContent = data.message || "Your analysis is being prepared. Try again shortly.";
+        return;
+      }
+      if (!response.ok || !data.analysis?.content) throw new Error(data.error || "Deep Analysis could not be opened.");
+      content.textContent = data.analysis.content;
+      button.textContent = "Open Deep Analysis";
+    } catch (error) {
+      content.textContent = error.message;
+      button.textContent = "Try Deep Analysis again";
+    } finally {
+      button.disabled = false;
+    }
+  });
+  byId("closeDeepAnalysis").addEventListener("click", () => {
+    byId("deepAnalysisViewer").hidden = true;
+  });
   form.addEventListener("submit", async (event) => {
     event.preventDefault();
     const email = byId("authEmail").value.trim();

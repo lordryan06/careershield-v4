@@ -27,7 +27,9 @@ export default async request => {
     const reference = verifyReportReference(session?.client_reference_id);
     if (!reference || !session?.id) return json({ received: true });
 
-    const status = event.type === "checkout.session.async_payment_failed" ? "payment_failed" : session.payment_status === "paid" || event.type === "checkout.session.async_payment_succeeded" ? "purchased" : "processing";
+    let status = event.type === "checkout.session.async_payment_failed" ? "payment_failed" : session.payment_status === "paid" || event.type === "checkout.session.async_payment_succeeded" ? "purchased" : "processing";
+    const expectedMinimum = { deep_analysis: 999, reviewed_report: 4999, human_review_upgrade: 3999 }[reference.product];
+    if (status === "purchased" && (String(session.currency || "").toLowerCase() !== "usd" || Number(session.amount_total || 0) < expectedMinimum)) status = "payment_mismatch";
     const store = getStore({ name: "careershield-report-orders", consistency: "strong" });
     const key = `users/${reference.userId}`;
     const record = await store.get(key, { type: "json" }) || { version: 1, orders: [] };
@@ -37,12 +39,16 @@ export default async request => {
       sessionId: session.id,
       paymentIntentId: typeof session.payment_intent === "string" ? session.payment_intent : null,
       status,
+      product: reference.product,
+      productName: reference.product === "deep_analysis" ? "CareerShield Deep Analysis" : reference.product === "human_review_upgrade" ? "Human Review Upgrade" : "Human-Reviewed Decision Report",
       amountTotal: Number(session.amount_total || 0),
       currency: String(session.currency || "usd").toLowerCase(),
       customerEmail: session.customer_details?.email || session.customer_email || null,
       purchasedAt: prior?.purchasedAt || new Date(Number(session.created || event.created) * 1000).toISOString(),
       updatedAt: new Date().toISOString(),
-      lastEventId: event.id
+      lastEventId: event.id,
+      analysis: prior?.analysis || null,
+      analysisStatus: prior?.analysisStatus || (reference.product === "deep_analysis" && status === "purchased" ? "ready_to_generate" : null)
     };
     if (existing >= 0) record.orders[existing] = order; else record.orders.unshift(order);
     record.orders = record.orders.slice(0, 20);
