@@ -1,4 +1,14 @@
-# CareerShield V4.3
+# CareerShield V4.3.4
+
+## V4.3.4 career-investment release
+
+- Positions CareerShield around protecting users from a bad career investment and answering where each path may leave them financially after 10 years.
+- Adds a current-age input and cumulative 10-year timeline covering earnings, training income, path costs, debt financing drag, and applicable military compensation and education benefits.
+- Adds path-level Data Confidence separating official source data, user-entered assumptions, CareerShield estimates, and facts that still need verification.
+- Adds downloadable 1080 × 1080 comparison cards plus native sharing or copy-to-clipboard summaries for parents, counselors, and short-form marketing.
+- Preserves specific mixed comparisons and all six CareerShield scoring factors.
+- Keeps the $49.99 human-reviewed report as introductory pricing to validate with customers.
+- After this release, major feature development should pause while CareerShield targets 500 relevant users and measures comparison completion and report demand.
 
 ## V4.3 experience update
 
