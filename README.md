@@ -1,4 +1,15 @@
-# CareerShield V4.3.9
+# CareerShield V4.4.0
+
+## V4.4.0 evidence-foundation release
+
+- Adds a structured evidence register to every newly calculated path. Each record stores the field, source, status, confidence, note, URL, and access timestamp.
+- Preserves source status distinctions: `official`, `user_entered`, `user_entered_or_estimated`, `needs_verification`, and `planned_source`.
+- Adds a documented source hierarchy and prevents planned sources from being presented as live verification.
+- Routes the evidence register through saved comparisons, account synchronization, AI Guide context, printable-plan data, and paid-report data.
+- Adds paid-report review requirements for BLS, official catalogs, IPEDS, Credential Engine, Apprenticeship.gov/RAPIDS, VA data, CareerOneStop, and state licensing boards when applicable.
+- Updates the fillable report’s evidence page and expands the fillable review checklist to five pages with 52 canonical fields and 53 widgets.
+
+This release establishes the evidence model; it does not claim that BLS, IPEDS, Credential Engine, RAPIDS, VA open data, CareerOneStop, or state-board integrations are live unless a record explicitly has `status: official` and a captured source URL/date.
 
 ## V4.3.9 simplified-hero release
 
