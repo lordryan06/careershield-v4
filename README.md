@@ -1,4 +1,11 @@
-# CareerShield V4.4.8
+# CareerShield V4.4.9
+
+## V4.4.9 one-click beta analysis
+
+- Makes the pricing-card action a true one-click flow: save paths, open the dashboard, generate, and display the report.
+- Changes the duplicate dashboard action to **Open beta analysis**.
+- Shows **Analysis is generating…** while the request is active instead of presenting another generate action.
+- Corrects the Netlify rate-limit window from 300 to the supported 180 seconds.
 
 ## V4.4.8 free Deep Analysis beta
 

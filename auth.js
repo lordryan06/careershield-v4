@@ -264,10 +264,12 @@ byId("buyDeepAnalysis").addEventListener("click", async () => {
 byId("generateDeepAnalysis").addEventListener("click", async () => {
   if (!currentUser) { chooseMode("login"); dialog.showModal(); message("Log in to generate your free Deep Analysis beta preview."); return; }
   const button = byId("generateDeepAnalysis");
+  const dashboardBeta = document.querySelector(".dashboard-buy-report");
   const viewer = byId("deepAnalysisViewer");
   const content = byId("deepAnalysisContent");
   if (!dashboard.open) { renderDashboard(); dashboard.showModal(); }
   button.disabled = true;
+  if (dashboardBeta) { dashboardBeta.disabled = true; dashboardBeta.textContent = "Analysis is generating…"; }
   button.textContent = "Preparing analysisâ€¦";
   viewer.hidden = false;
   content.textContent = "CareerShield is stress-testing your saved comparisonâ€¦";
@@ -281,7 +283,7 @@ byId("generateDeepAnalysis").addEventListener("click", async () => {
   } catch (error) {
     content.textContent = error.message;
     button.textContent = "Try Deep Analysis again";
-  } finally { button.disabled = false; }
+  } finally { button.disabled = false; if (dashboardBeta) { dashboardBeta.disabled = false; dashboardBeta.textContent = "Open beta analysis"; } }
 });
 byId("closeDeepAnalysis").addEventListener("click", () => { byId("deepAnalysisViewer").hidden = true; });
 
