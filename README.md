@@ -1,4 +1,12 @@
-# CareerShield V4.4.11
+# CareerShield V4.6.2
+
+## V4.6.2 complete military specialty picker
+
+- Loads every active Army, Air Force, Navy, Marine Corps, Coast Guard, and Space Force specialty in the official August 2024 DMDC crosswalk published by O*NET.
+- Makes specialty category an optional filter; **All specialties** is now the default.
+- Filters the complete list by service branch and enlisted, commissioned officer, or warrant officer track.
+- Keeps each specialty's official O*NET civilian-career mappings available for CareerShield scoring.
+- Adds the source date to the bundled dataset so future releases can replace it when O*NET publishes an updated file.
 
 ## V4.4.11 score-based report ranking
 
@@ -206,6 +214,12 @@ CareerShield V4 is a Netlify-ready decision tool for comparing up to four mixed 
 - Updates the report template and standardized checklist for partner assignment, disclosed qualifications, contextual comments, corrections, and approval.
 - Adds `PARTNER-REVIEW-WORKFLOW.md` with responsibility boundaries, case states, case-view requirements, approval records, the proposed $25 / $24.99 split to test, and the launch gate.
 - Keeps historical Stripe order types readable while preventing new `reviewed_report`, `human_review_upgrade`, or `partner_review` checkout requests.
+
+## V4.6.1 Navy diving specialties
+
+- Adds `Diving & salvage` as a dedicated military specialty category.
+- Queries the official O*NET military crosswalk using both `diver` and `diving` for Navy enlisted searches, requests the full active result set, removes duplicates, and preserves official specialty titles and civilian mappings.
+- Allows records such as `Diver, Second Class` to appear without relying on unrelated broad categories such as Engineering or Combat.
 
 ## V4.5.0 evidence layers
 
