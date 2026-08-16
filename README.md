@@ -205,6 +205,12 @@ CareerShield V4 is a Netlify-ready decision tool for comparing up to four mixed 
 - CareerShield does not rename an unexplained placement rate as a career outcomes rate, and unavailable first-destination fields remain unavailable rather than being estimated.
 - Geographic wages, AI-model components/version, and first-destination evidence flow into saved comparisons, Data Confidence, the printable plan, Deep Analysis, and report snapshots.
 
+### V4.5.6 GI Bill hover explanation
+
+- Adds an information symbol beside the GI Bill amount in the green decision-plan benefit section.
+- Reveals the full calculation when the benefit section is hovered or the symbol receives keyboard focus or a mobile tap.
+- Keeps the complete breakdown visible in the actual printed or PDF version, where hover is unavailable.
+
 ### V4.5.5 streamlined GI Bill presentation
 
 - Removes the detailed GI Bill arithmetic from the regular comparison path card to keep score results concise.

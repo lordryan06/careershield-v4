@@ -1,5 +1,5 @@
 const $ = id => document.getElementById(id);
-const APP_VERSION = "4.5.5";
+const APP_VERSION = "4.5.6";
 const money = value => value == null ? "Not available" : new Intl.NumberFormat("en-US", { style:"currency", currency:"USD", maximumFractionDigits:0 }).format(value);
 const clamp = value => Math.max(0, Math.min(100, Math.round(value)));
 const get = (obj, path) => path.split(".").reduce((v, key) => v?.[key], obj) ?? obj?.[path] ?? null;
@@ -402,7 +402,7 @@ militaryInputs=()=>{const result=militaryInputsBeforeGiBillBreakdown();result.gi
 refreshGiBillBreakdown();
 render();
 
-// V4.5.4: carry the GI Bill arithmetic into the printable decision plan.
+// V4.5.6: explain the GI Bill value on hover, focus, or tap in the decision plan.
 const renderPlanBeforeGiBillBreakdown=renderPlan;
-renderPlan=ranked=>{renderPlanBeforeGiBillBreakdown(ranked);const breakdown=ranked[0]?.militaryComp?.giBillBreakdown,panel=document.querySelector(".print-benefit");if(!breakdown||!panel)return;const detail=document.createElement("div");detail.className="print-benefit-breakdown";detail.innerHTML=giBillBreakdownMarkup(breakdown);panel.appendChild(detail)};
+renderPlan=ranked=>{renderPlanBeforeGiBillBreakdown(ranked);const breakdown=ranked[0]?.militaryComp?.giBillBreakdown,panel=document.querySelector(".print-benefit"),amount=panel?.querySelector(":scope > strong");if(!breakdown||!panel||!amount)return;panel.classList.add("has-gi-bill-tooltip");const trigger=document.createElement("button");trigger.className="gi-bill-hover-trigger";trigger.type="button";trigger.setAttribute("aria-label","Show how the estimated Post-9/11 GI Bill value was calculated");trigger.setAttribute("aria-describedby","giBillDecisionBreakdown");trigger.textContent="i";amount.appendChild(trigger);const detail=document.createElement("div");detail.id="giBillDecisionBreakdown";detail.className="gi-bill-hover-breakdown";detail.setAttribute("role","tooltip");detail.innerHTML=giBillBreakdownMarkup(breakdown);panel.appendChild(detail)};
 render();
