@@ -212,6 +212,10 @@ CareerShield V4 is a Netlify-ready decision tool for comparing up to four mixed 
 
 - Blank trade and certification cost categories no longer block scoring. CareerShield treats blank optional costs as $0 and lists them under Data Confidence as figures that still need verification.
 
+### V4.4.15 focused homepage hero
+
+- Removed the large illustrative comparison panel from the homepage hero so the headline and primary comparison action have a cleaner, less distracting flow.
+
 The production brand assets are `careershield-logo.png` for the horizontal navigation lockup and `careershield-icon.png` for the browser icon.
 
 `legal.html` contains the paid-beta Privacy Notice, Terms of Use, personalized-report Refund Policy, and AI Guide disclosure. These are operational drafts, not a substitute for review by a qualified attorney before broad commercial launch.
