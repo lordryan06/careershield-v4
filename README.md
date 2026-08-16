@@ -205,6 +205,11 @@ CareerShield V4 is a Netlify-ready decision tool for comparing up to four mixed 
 - CareerShield does not rename an unexplained placement rate as a career outcomes rate, and unavailable first-destination fields remain unavailable rather than being estimated.
 - Geographic wages, AI-model components/version, and first-destination evidence flow into saved comparisons, Data Confidence, the printable plan, Deep Analysis, and report snapshots.
 
+### V4.5.1 Netlify dependency compatibility
+
+- Pins Netlify builds to Node 20 and npm 10.8.2 to avoid the npm 11 dependency-tree crash seen on Netlify's Node 24 default.
+- Adds `.nvmrc`, `.npmrc`, and `.gitignore` so local dependency folders are not committed or processed as project source.
+
 ## V4.4.12 trade and certification economics
 
 - Trade and certification pay now changes with the selected O*NET occupation instead of reusing one fixed default.

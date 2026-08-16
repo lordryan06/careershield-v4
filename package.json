@@ -1,8 +1,13 @@
 {
   "name": "careershield-v4",
-  "version": "4.5.0",
+  "version": "4.5.1",
   "private": true,
   "type": "module",
+  "packageManager": "npm@10.8.2",
+  "engines": {
+    "node": ">=20 <21",
+    "npm": ">=10 <11"
+  },
   "scripts": {
     "build": "esbuild auth.js --bundle --format=iife --outfile=auth.bundle.js",
     "dev": "npm run build && npx netlify dev"

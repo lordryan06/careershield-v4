@@ -3,6 +3,10 @@
   publish = "."
   functions = "netlify/functions"
 
+[build.environment]
+  NODE_VERSION = "20"
+  NPM_VERSION = "10.8.2"
+
 [dev]
   publish = "."
 
