@@ -1,4 +1,12 @@
-# CareerShield V4.6.6
+# CareerShield V4.6.7
+
+## V4.6.7 streamlined Partner Review proof
+
+- Removes the generic **Built for the whole decision team** section from the homepage.
+- Removes the oversized standalone illustrative Partner Review preview.
+- Moves a shorter **See what your partner reviews** explanation directly into the Partner Review pricing card.
+- Adds a compact, collapsible sample-report preview covering financial outlook and partner comments.
+- Retains a concise disclaimer that the preview is illustrative and not a customer outcome or completed review.
 
 ## V4.6.6 persistent path identity
 

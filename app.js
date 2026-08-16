@@ -1,5 +1,5 @@
 const $ = id => document.getElementById(id);
-const APP_VERSION = "4.6.6";
+const APP_VERSION = "4.6.7";
 const money = value => value == null ? "Not available" : new Intl.NumberFormat("en-US", { style:"currency", currency:"USD", maximumFractionDigits:0 }).format(value);
 const clamp = value => Math.max(0, Math.min(100, Math.round(value)));
 const get = (obj, path) => path.split(".").reduce((v, key) => v?.[key], obj) ?? obj?.[path] ?? null;
