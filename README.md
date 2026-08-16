@@ -1,4 +1,11 @@
-# CareerShield V4.6.2
+# CareerShield V4.6.3
+
+## V4.6.3 entry-level military and GI Bill clarity
+
+- Shows likely entry-level military specialties by default while allowing advanced qualifications to be revealed when needed.
+- Treats entry-level status as a CareerShield screening aid, not an official recruiting eligibility determination.
+- Keeps the GI Bill housing estimate tied to the school or training ZIP code and the legally required E-5-with-dependents rate.
+- Clarifies that the user's dependent status affects active-duty BAH but does not change the GI Bill MHA housing basis.
 
 ## V4.6.2 complete military specialty picker
 
