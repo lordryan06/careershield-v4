@@ -2,7 +2,23 @@ import { getStore } from "@netlify/blobs";
 import { getUser, verifyRequestOrigin } from "@netlify/identity";
 
 const json = (data, status = 200) => new Response(JSON.stringify(data), { status, headers: { "content-type": "application/json; charset=utf-8", "cache-control": "no-store" } });
-const SYSTEM = `You produce a CareerShield Deep Analysis beta preview. Analyze only the supplied saved comparison and evidence. Do not invent facts, imply that a possible source match verifies a specific program, or guarantee outcomes. Clearly distinguish official data, user-entered values, CareerShield estimates, and unresolved verification needs. Use plain language and USD. Produce these headings exactly: Executive Takeaway; Ranking and Why; Expected Scenario; Best-Case Scenario; Downside Scenario; Break-Even Points; Red Flags and Material Assumptions; What Could Reverse the Ranking; Questions to Ask; Next 7 Actions; Data Confidence. Be specific to every compared path. State that this is AI-generated beta decision support, not financial, legal, admissions, recruiting, or career counseling advice.`;
+const SYSTEM = `You produce a concise CareerShield Deep Analysis beta preview for a student and parent. Analyze only the supplied comparison and evidence. Never invent facts, treat a possible source match as verification, or guarantee an outcome. Clearly label official data, user-entered values, CareerShield estimates, and verification gaps. Use plain language and USD.
+
+Produce these headings exactly and in this order:
+Executive Takeaway
+The 3 Things That Matter Most
+Path-by-Path Decision Summary
+Expected Scenario
+Best-Case Scenario
+Downside Scenario
+Break-Even Points
+What Could Reverse the Ranking
+Red Flags and Material Assumptions
+Questions to Ask
+Next 7 Actions
+Data Confidence
+
+Rules: Put the current leading path and main reason in the first sentence. Keep Executive Takeaway under 100 words. Under The 3 Things That Matter Most, give exactly three numbered points. Under Path-by-Path Decision Summary, give each path one short "Why it could win" bullet and one "Main risk" bullet. Keep every other section to 3-5 bullets. Explain break-even timing in plain English; say when the data cannot support an exact crossover. Rank actions by importance. Keep the entire report under 1,300 words. End with one short beta decision-support disclaimer.`;
 
 export default async request => {
   if (request.method !== "POST") return json({ error: "Method not allowed" }, 405);
@@ -26,7 +42,7 @@ export default async request => {
     const previewStore = getStore({ name: "careershield-deep-analysis-previews", consistency: "strong" });
     const previewKey = `users/${user.id}`;
     const existing = await previewStore.get(previewKey, { type: "json" });
-    if (existing?.analysis?.content && existing.fingerprint === fingerprint) return json({ analysis: existing.analysis, preview: true, cached: true });
+    if (existing?.analysis?.content && existing.analysis.formatVersion === 2 && existing.fingerprint === fingerprint) return json({ analysis: existing.analysis, preview: true, cached: true });
     if (existing?.status === "generating" && existing.startedAt && Date.now() - new Date(existing.startedAt).getTime() < 120000) return json({ status: "generating", message: "Your free beta analysis is being prepared." }, 202);
     const apiKey = process.env.OPENAI_API_KEY;
     if (!apiKey) return json({ error: "Deep Analysis generation is not configured. Add OPENAI_API_KEY in Netlify." }, 503);
@@ -40,7 +56,7 @@ export default async request => {
     const data = await response.json().catch(() => ({}));
     const content = data.output_text || (data.output || []).flatMap(item => item.content || []).find(item => item.type === "output_text")?.text;
     if (!response.ok || !content) throw new Error(data.error?.message || "The analysis could not be generated.");
-    const analysis = { version: 1, betaPreview: true, content, generatedAt: new Date().toISOString(), planSnapshot: snapshot };
+    const analysis = { version: 1, formatVersion: 2, betaPreview: true, content, generatedAt: new Date().toISOString(), planSnapshot: snapshot };
     await previewStore.setJSON(previewKey, { version: 1, status: "complete", fingerprint, analysis, updatedAt: analysis.generatedAt });
     return json({ analysis, preview: true, cached: false });
   } catch (error) {
@@ -49,4 +65,4 @@ export default async request => {
   }
 };
 
-export const config = { path: "/api/deep-analysis", method: "POST", rateLimit: { action: "rate_limit", windowLimit: 6, windowSize: 300, aggregateBy: ["ip", "domain"] } };
+export const config = { path: "/api/deep-analysis", method: "POST", rateLimit: { action: "rate_limit", windowLimit: 6, windowSize: 180, aggregateBy: ["ip", "domain"] } };

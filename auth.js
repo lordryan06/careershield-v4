@@ -46,6 +46,24 @@ function safe(value = "") {
   return String(value).replace(/[&<>"']/g, character => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[character]);
 }
 
+const deepAnalysisHeadings = ["Executive Takeaway","The 3 Things That Matter Most","Path-by-Path Decision Summary","Expected Scenario","Best-Case Scenario","Downside Scenario","Break-Even Points","What Could Reverse the Ranking","Red Flags and Material Assumptions","Questions to Ask","Next 7 Actions","Data Confidence"];
+function analysisInline(value) { return safe(value).replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>"); }
+function formatDeepAnalysis(value) {
+  const lookup = new Map(deepAnalysisHeadings.map((heading, index) => [heading.toLowerCase(), { heading, index }]));
+  const sections = []; let current = { heading: "Deep Analysis", index: -1, lines: [] };
+  String(value || "").split(/\r?\n/).forEach(raw => {
+    const clean = raw.trim().replace(/^#{1,4}\s*/, "").replace(/:$/, ""), match = lookup.get(clean.toLowerCase());
+    if (match) { if (current.lines.length) sections.push(current); current = { ...match, lines: [] }; }
+    else if (raw.trim()) current.lines.push(raw.trim());
+  });
+  if (current.lines.length) sections.push(current);
+  return sections.map(section => {
+    const items = section.lines.map(line => { const list = line.match(/^(?:[-*•]|\d+[.)])\s+(.+)$/); return list ? `<li>${analysisInline(list[1])}</li>` : `<p>${analysisInline(line)}</p>`; }).join("");
+    const priority = section.index === 0 ? " priority" : section.index === 1 ? " key-points" : "";
+    return `<section class="analysis-section${priority}"><span>${section.index >= 0 ? String(section.index + 1).padStart(2, "0") : ""}</span><h4>${safe(section.heading)}</h4><div>${items}</div></section>`;
+  }).join("");
+}
+
 function dashboardMessage(text, error = false) {
   const target = byId("dashboardMessage");
   target.textContent = text;
@@ -278,7 +296,7 @@ byId("generateDeepAnalysis").addEventListener("click", async () => {
     const data = await response.json().catch(() => ({}));
     if (response.status === 202) { content.textContent = data.message || "Your analysis is being prepared. Try again shortly."; return; }
     if (!response.ok || !data.analysis?.content) throw new Error(data.error || "Deep Analysis could not be opened.");
-    content.textContent = data.analysis.content;
+    content.innerHTML = formatDeepAnalysis(data.analysis.content);
     button.textContent = "Open Deep Analysis";
   } catch (error) {
     content.textContent = error.message;

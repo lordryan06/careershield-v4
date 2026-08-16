@@ -1,4 +1,13 @@
-# CareerShield V4.4.9
+# CareerShield V4.4.10
+
+## V4.4.10 clearer Deep Analysis
+
+- Leads with the winning path and the three facts that matter most.
+- Adds a short path-by-path decision summary with one advantage and one primary risk per path.
+- Limits the report to concise bullets and plain-language break-even explanations.
+- Renders each section as a scannable card instead of one large text block.
+- Highlights the Executive Takeaway and three key decision points.
+- Automatically regenerates older cached beta analyses in the clearer format.
 
 ## V4.4.9 one-click beta analysis
 
