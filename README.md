@@ -196,6 +196,17 @@ The Open Graph image remains root-relative until the final branded production do
 
 CareerShield V4 is a Netlify-ready decision tool for comparing up to four mixed career paths: college, skilled trades and apprenticeships, certifications and technical training, and military service.
 
+## V4.6.0 Partner Review direction
+
+- Replaces the internally fulfilled $49.99 Human-Reviewed Report with the planned `CareerShield Partner Review — $49.99`.
+- Defines CareerShield as the owner of evidence, scoring, ten-year modeling, AI analysis, report generation, workflow, formatting, and quality standards.
+- Defines the approved independent counselor or partner as the owner of contextual judgment, assumption and discrepancy review, comments, recommendations, and final approval or correction requests.
+- Shows the planned customer price for validation but disables premium-review checkout until approved reviewer capacity, customer consent, assignment, privacy, payout, cancellation, refund, support, and delivery procedures are active.
+- Adds Partner Review interest and independent-counselor interest choices to the Netlify support form.
+- Updates the report template and standardized checklist for partner assignment, disclosed qualifications, contextual comments, corrections, and approval.
+- Adds `PARTNER-REVIEW-WORKFLOW.md` with responsibility boundaries, case states, case-view requirements, approval records, the proposed $25 / $24.99 split to test, and the launch gate.
+- Keeps historical Stripe order types readable while preventing new `reviewed_report`, `human_review_upgrade`, or `partner_review` checkout requests.
+
 ## V4.5.0 evidence layers
 
 - Geographic wage records now retain occupation code, work ZIP, geography and area code, data year, P10, P25, median, P75, P90, mean when returned, source URL, and retrieval date. CareerShield uses the geographic median for the expected case and preserves P25/P75 for downside and upside analysis. The lookup falls back from local to state to national through CareerOneStop/BLS data.

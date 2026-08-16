@@ -1,5 +1,5 @@
 const $ = id => document.getElementById(id);
-const APP_VERSION = "4.5.7";
+const APP_VERSION = "4.6.0";
 const money = value => value == null ? "Not available" : new Intl.NumberFormat("en-US", { style:"currency", currency:"USD", maximumFractionDigits:0 }).format(value);
 const clamp = value => Math.max(0, Math.min(100, Math.round(value)));
 const get = (obj, path) => path.split(".").reduce((v, key) => v?.[key], obj) ?? obj?.[path] ?? null;
@@ -207,9 +207,15 @@ card=(option,rank)=>{const confidence=option.dataConfidence||dataConfidence(opti
 const renderBeforeInvestmentAnalysis=render;
 render=()=>{renderBeforeInvestmentAnalysis();renderFinancialTimeline();renderShareComparison()};
 const navPositioning=document.querySelector(".nav-actions>span");if(navPositioning)navPositioning.textContent="Career investment analysis";
-const reportIntro=$("report-title")?.nextElementSibling;if(reportIntro)reportIntro.textContent="Compare for free, unlock an instant AI stress test, or add CareerShield human quality assurance for a family-ready report.";
+const reportIntro=$("report-title")?.nextElementSibling;if(reportIntro)reportIntro.textContent="Compare for free, run an instant AI stress test, or request a family-ready report reviewed by an approved CareerShield partner.";
 document.title="CareerShield — Career investment analysis";
 render();
+
+// V4.6.0: Partner Review replaces the internally fulfilled human-review product.
+const partnerUpgrade=document.querySelector('[data-product="human_review_upgrade"]');
+if(partnerUpgrade){const replacement=partnerUpgrade.cloneNode(true);replacement.classList.remove("product-checkout-link","upgrade-review");replacement.removeAttribute("data-product");replacement.textContent="Partner Review availability";replacement.addEventListener("click",()=>{window.location.href="legal.html#support"});partnerUpgrade.replaceWith(replacement)}
+const familyWorksheetMarkupBeforePartnerReview=familyWorksheetMarkup;
+familyWorksheetMarkup=ranked=>familyWorksheetMarkupBeforePartnerReview(ranked).replace("Human review remains optional.","Partner Review will be optional when approved reviewers become available.");
 
 // Allow direct navigation between all guided-builder stages.
 const applyBuilderStageBeforeClickableProgress=applyBuilderStage;
