@@ -1,4 +1,10 @@
-# CareerShield V4.4.4
+# CareerShield V4.4.5
+
+## V4.4.5 Netlify build reliability
+
+- Removes the accidental `pnpm-lock.yaml` that caused Netlify to switch package managers.
+- Pins the build tool version instead of downloading an unspecified future release.
+- Keeps the QR-code dependency and all V4.4.4 take-home functionality unchanged.
 
 ## V4.4.4 downloadable QR comparison
 
