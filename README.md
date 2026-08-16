@@ -1,4 +1,18 @@
-# CareerShield V4.4.5
+# CareerShield V4.4.7
+
+## V4.4.7 family worksheet handoff
+
+- Removes QR codes, anonymous shared-comparison storage, the QR dependency, and related Netlify runtime changes.
+- Replaces the QR flow with a self-contained Family Decision Worksheet in the free download and printable plan.
+- Gives parents a structured discussion: current leader, financial differences, assumptions to verify, questions to ask, and what could change the decision.
+- Directs families to reopen CareerShield on the student's device or through the student's account for the optional $9.99 Deep Analysis.
+- Restores the established authenticated `/api/plans` function with no anonymous sharing routes.
+
+## V4.4.6 Netlify npm crash fix
+
+- Pins Netlify builds to Node.js 22 and npm 10.9.4.
+- Avoids the npm 11 installer crash shown as `Cannot read properties of null (reading 'matches')`.
+- Adds `.nvmrc` so the repository and Netlify configuration agree on the build runtime.
 
 ## V4.4.5 Netlify build reliability
 

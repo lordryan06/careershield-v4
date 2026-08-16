@@ -1,6 +1,6 @@
 {
   "name": "careershield-v4",
-  "version": "4.4.5",
+  "version": "4.4.7",
   "private": true,
   "type": "module",
   "scripts": {
@@ -9,8 +9,7 @@
   },
   "dependencies": {
     "@netlify/blobs": "^10.0.0",
-    "@netlify/identity": "^1.2.0",
-    "qrcode": "^1.5.4"
+    "@netlify/identity": "^1.2.0"
   },
   "devDependencies": {
     "esbuild": "0.28.2"
