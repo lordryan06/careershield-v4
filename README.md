@@ -1,4 +1,11 @@
-# CareerShield V4.4.3
+# CareerShield V4.4.4
+
+## V4.4.4 downloadable QR comparison
+
+- Adds the private take-home QR code directly to the free downloaded comparison image.
+- Includes the recovery URL, expiration date, unresolved family questions, and $9.99 Deep Analysis handoff.
+- Uses the same saved comparison token as the printable plan and Family Review page.
+- Shows progress while CareerShield creates the private link and QR code.
 
 ## V4.4.3 take-home QR deployment fix
 
