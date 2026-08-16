@@ -205,6 +205,13 @@ CareerShield V4 is a Netlify-ready decision tool for comparing up to four mixed 
 - CareerShield does not rename an unexplained placement rate as a career outcomes rate, and unavailable first-destination fields remain unavailable rather than being estimated.
 - Geographic wages, AI-model components/version, and first-destination evidence flow into saved comparisons, Data Confidence, the printable plan, Deep Analysis, and report snapshots.
 
+### V4.5.2 example clarity and path actions
+
+- Clearly labels the hero comparison as an interactive example and repeats that it is not a personal result.
+- Adds accessible information bubbles beside all six factors in the example, using the same explanations as live comparison cards.
+- Replaces letter placeholders with distinct college, trades/certifications, and military route symbols.
+- Promotes official school, service-branch, apprenticeship, and training-provider links into high-visibility action buttons on each path card.
+
 ### V4.5.1 Netlify dependency compatibility
 
 - Pins Netlify builds to Node 20 and npm 10.8.2 to avoid the npm 11 dependency-tree crash seen on Netlify's Node 24 default.
