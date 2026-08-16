@@ -1,4 +1,13 @@
-# CareerShield V4.4.7
+# CareerShield V4.4.8
+
+## V4.4.8 free Deep Analysis beta
+
+- Temporarily removes Stripe and purchase verification from Deep Analysis.
+- Keeps login and a synchronized saved comparison required so the analysis uses the customer's exact paths.
+- Generates the full expected, best-case, downside, break-even, red-flag, reversal, question, action, and Data Confidence report.
+- Caches the preview in the user's account and regenerates it when the saved comparison materially changes.
+- Keeps the Human-Reviewed Decision Report paid and unchanged.
+- Requires `OPENAI_API_KEY` in Netlify for generation.
 
 ## V4.4.7 family worksheet handoff
 

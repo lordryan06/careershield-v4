@@ -250,8 +250,19 @@ document.querySelectorAll(".product-checkout-link").forEach(link => link.addEven
   }
 }));
 
+byId("buyDeepAnalysis").addEventListener("click", async () => {
+  if (!currentUser) { chooseMode("login"); dialog.showModal(); message("Log in so CareerShield can use your saved comparison for the free beta analysis."); return; }
+  const plans = window.CareerShieldPlans?.get?.() || [];
+  if (!plans.length) { window.alert("Build at least one comparison path before generating Deep Analysis."); document.getElementById("builder-title")?.scrollIntoView({ behavior: "smooth", block: "start" }); return; }
+  const button = byId("buyDeepAnalysis"), original = button.textContent;
+  button.disabled = true; button.textContent = "Saving comparison…";
+  try { await syncPlans(plans); byId("generateDeepAnalysis").click(); }
+  catch (error) { window.alert(error.message); }
+  finally { button.disabled = false; button.textContent = original; }
+});
+
 byId("generateDeepAnalysis").addEventListener("click", async () => {
-  if (!currentUser) { chooseMode("login"); dialog.showModal(); message("Log in to open your purchased Deep Analysis."); return; }
+  if (!currentUser) { chooseMode("login"); dialog.showModal(); message("Log in to generate your free Deep Analysis beta preview."); return; }
   const button = byId("generateDeepAnalysis");
   const viewer = byId("deepAnalysisViewer");
   const content = byId("deepAnalysisContent");
