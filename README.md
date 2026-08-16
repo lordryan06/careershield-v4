@@ -196,6 +196,14 @@ The Open Graph image remains root-relative until the final branded production do
 
 CareerShield V4 is a Netlify-ready decision tool for comparing up to four mixed career paths: college, skilled trades and apprenticeships, certifications and technical training, and military service.
 
+## V4.4.12 trade and certification economics
+
+- Trade and certification pay now changes with the selected O*NET occupation instead of reusing one fixed default.
+- A required planned-work ZIP code retrieves CareerOneStop/BLS OEWS local wage data when Netlify has `CAREERONESTOP_USER_ID` and `CAREERONESTOP_API_TOKEN` configured.
+- If CareerOneStop is not configured or unavailable, CareerShield uses the selected occupation's national O*NET wage and clearly labels it as a non-local fallback.
+- Users must name the exact apprenticeship, school, certification, or training provider and enter its actual cost components. Zero is allowed, but blank cost assumptions cannot be scored.
+- Saved comparisons retain the provider, work ZIP, wage source, and returned local wage record for comparison, sync, Data Confidence, Deep Analysis, and reports.
+
 The production brand assets are `careershield-logo.png` for the horizontal navigation lockup and `careershield-icon.png` for the browser icon.
 
 `legal.html` contains the paid-beta Privacy Notice, Terms of Use, personalized-report Refund Policy, and AI Guide disclosure. These are operational drafts, not a substitute for review by a qualified attorney before broad commercial launch.

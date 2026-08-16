@@ -1,5 +1,5 @@
 const $ = id => document.getElementById(id);
-const APP_VERSION = "4.4.1";
+const APP_VERSION = "4.4.12";
 const money = value => value == null ? "Not available" : new Intl.NumberFormat("en-US", { style:"currency", currency:"USD", maximumFractionDigits:0 }).format(value);
 const clamp = value => Math.max(0, Math.min(100, Math.round(value)));
 const get = (obj, path) => path.split(".").reduce((v, key) => v?.[key], obj) ?? obj?.[path] ?? null;
@@ -300,6 +300,58 @@ const renderPlanBeforeFamilyWorksheet=renderPlan;
 renderPlan=ranked=>{renderPlanBeforeFamilyWorksheet(ranked);const section=$("planSection");if(!ranked.length||!section)return;const qrHandoff=section.querySelector(".take-home-handoff");if(qrHandoff){const holder=document.createElement("div");holder.innerHTML=familyWorksheetMarkup(ranked);qrHandoff.replaceWith(holder.firstElementChild)}const printButton=section.querySelector(":scope > #printPlan");if(printButton){printButton.hidden=false;printButton.textContent="Print or save this family plan"}};
 async function downloadFamilyWorksheet(ranked){const canvas=document.createElement("canvas");canvas.width=1275;canvas.height=1800;const ctx=canvas.getContext("2d"),start=Number(ranked[0]?.startAge||18),end=start+10,colors=["#155eef","#0a8f68","#d47a18","#7046b5"];ctx.fillStyle="#f3f7fc";ctx.fillRect(0,0,1275,1800);ctx.fillStyle="#071b30";ctx.fillRect(0,0,1275,245);const logo=await loadCanvasLogo();if(logo)ctx.drawImage(logo,65,30,320,128);else{ctx.fillStyle="#fff";ctx.font="800 42px Arial";ctx.fillText("CareerShield",65,90)}ctx.fillStyle="#83b5ff";ctx.font="800 20px Arial";ctx.fillText("FREE CAREER INVESTMENT COMPARISON",65,178);ctx.fillStyle="#fff";ctx.font="800 42px Arial";ctx.fillText(`Where could each path leave you by age ${end}?`,65,224);ranked.slice(0,4).forEach((option,index)=>{const y=285+index*205,confidence=option.dataConfidence||dataConfidence(option),weakest=Object.entries(option.metrics||{}).sort((a,b)=>a[1]-b[1])[0]?.[0]||"Assumptions";ctx.fillStyle="#fff";ctx.beginPath();ctx.roundRect(55,y,1165,175,18);ctx.fill();ctx.fillStyle=colors[index];ctx.fillRect(55,y,12,175);ctx.fillStyle="#071b30";ctx.font="800 26px Arial";canvasText(ctx,option.program||option.savedLabel||option.name,92,y+40,680);ctx.fillStyle="#536a80";ctx.font="400 17px Arial";canvasText(ctx,option.career?.name||option.pathLabel,92,y+70,680);ctx.fillStyle="#071b30";ctx.font="800 38px Arial";ctx.textAlign="right";ctx.fillText(`${option.score}/100`,1170,y+45);ctx.font="800 23px Arial";ctx.fillText(money(tenYearValue(option)),1170,y+78);ctx.textAlign="left";ctx.fillStyle="#315b8d";ctx.font="700 15px Arial";ctx.fillText(`Debt: ${money(option.inputs?.debt||0)}`,92,y+112);ctx.fillText(`Time to earnings: ${Math.round(Number(option.inputs?.duration||0))} months`,360,y+112);ctx.fillText(`Confidence: ${confidence.label} ${confidence.score}/100`,700,y+112);ctx.fillStyle="#9a5b12";ctx.fillText(`Watch closely: ${weakest}`,92,y+145)});const boxY=1140;ctx.fillStyle="#e8f2ff";ctx.beginPath();ctx.roundRect(55,boxY,1165,560,22);ctx.fill();ctx.fillStyle="#155eef";ctx.font="800 18px Arial";ctx.fillText("FAMILY DECISION WORKSHEET",90,boxY+47);ctx.fillStyle="#071b30";ctx.font="800 32px Arial";ctx.fillText("Turn the comparison into a family decision.",90,boxY+91);ctx.fillStyle="#536a80";ctx.font="400 17px Arial";ctx.fillText("Spend 15 minutes challenging the assumptions before anyone commits, enrolls, borrows, or signs.",90,boxY+126);ctx.fillStyle="#071b30";ctx.font="800 20px Arial";ctx.fillText("Discuss and check each item",90,boxY+180);ctx.font="400 18px Arial";["□ Which cost or pay assumption worries us most?","□ What result would change the current ranking?","□ Who will verify each school, employer, recruiter, or program claim?","□ What is our deadline for making this decision?"].forEach((line,i)=>ctx.fillText(line,90,boxY+220+i*39));ctx.font="800 18px Arial";ctx.fillText("Our biggest unanswered question:",90,boxY+405);ctx.strokeStyle="#8fa8c0";ctx.beginPath();ctx.moveTo(390,boxY+408);ctx.lineTo(1140,boxY+408);ctx.stroke();ctx.fillText("The next person or organization we will contact:",90,boxY+455);ctx.beginPath();ctx.moveTo(500,boxY+458);ctx.lineTo(1140,boxY+458);ctx.stroke();ctx.fillStyle="#155eef";ctx.font="800 18px Arial";ctx.fillText("NEXT STEP",90,boxY+510);ctx.fillStyle="#071b30";ctx.font="700 16px Arial";ctx.fillText("Reopen CareerShield on this device or log in to restore saved paths. Deep Analysis: $9.99.",210,boxY+510);ctx.fillStyle="#536a80";ctx.font="400 14px Arial";ctx.fillText(`${location.origin} · Directional decision support—not a guarantee. Verify all material claims.`,65,1760);await new Promise((resolve,reject)=>canvas.toBlob(blob=>{if(!blob)return reject(new Error("The family worksheet could not be created."));const link=document.createElement("a");link.href=URL.createObjectURL(blob);link.download=`careershield-family-decision-worksheet-age-${start}-to-${end}.png`;link.click();setTimeout(()=>URL.revokeObjectURL(link.href),1000);resolve()},"image/png"))}
 downloadFreeComparisonSummary=downloadFamilyWorksheet;
+
+// V4.4.12: occupation- and location-specific trade/training economics.
+let selectedLocalWage=null;
+function nationalOccupationMedian(){return Number(selectedCareer?.wage?.annual_median||selectedCareer?.wage?.annual_median_over||0)||0}
+function wageElements(){return activePath==="trade"?{zip:$("tradeWorkZip"),source:$("tradeWageSource")}:{zip:$("trainingWorkZip"),source:$("trainingWageSource")}}
+function applyOccupationWage(result){
+  const median=Number(result?.annual?.median||0),starting=Number(result?.annual?.starting||0),local=Boolean(median),source=wageElements().source;
+  if(activePath==="trade"){
+    const journeyAnnual=median||nationalOccupationMedian(),startAnnual=starting||Math.round(journeyAnnual*.6);
+    if(journeyAnnual){$("tradeJourneyWage").value=(journeyAnnual/2080).toFixed(2);$("tradeStartWage").value=(startAnnual/2080).toFixed(2)}
+    source.textContent=local?`${result.source}: ${result.geography}. Starting pay uses the 25th percentile; journey pay uses the median.`:`National O*NET wage fallback for ${selectedCareer?.name}. This is not ZIP-specific; edit it if your program publishes a wage schedule.`;
+    updateTradeSummary();
+  }else if(activePath==="training"){
+    const salary=starting||Math.round(nationalOccupationMedian()*.82);
+    if(salary)$("trainingStartingSalary").value=Math.round(salary);
+    source.textContent=local?`${result.source}: ${result.geography}. Expected pay uses the local 25th percentile and remains editable.`:`National O*NET wage fallback for ${selectedCareer?.name}. This is not ZIP-specific and remains editable.`;
+    updateTrainingSummary();
+  }
+}
+async function loadSelectedOccupationWage(){
+  if(!selectedCareer?.code||!(activePath==="trade"||activePath==="training"))return;
+  const {zip,source}=wageElements(),value=zip.value.trim();selectedLocalWage=null;
+  if(!/^\d{5}$/.test(value)){source.textContent="Enter a valid five-digit ZIP code to load local pay.";applyOccupationWage(null);return}
+  source.textContent="Loading occupation pay for this ZIP code…";
+  try{selectedLocalWage=await api(`/api/local-wages?code=${encodeURIComponent(selectedCareer.code)}&zip=${encodeURIComponent(value)}`);applyOccupationWage(selectedLocalWage)}
+  catch(error){applyOccupationWage(null);source.textContent+=` Local lookup: ${error.message}`}
+}
+async function loadWageAfterCareerSelection(){for(let attempt=0;attempt<40&&!selectedCareer;attempt++)await new Promise(resolve=>setTimeout(resolve,250));if(selectedCareer)loadSelectedOccupationWage()}
+$("targetCareerSelect").addEventListener("change",loadWageAfterCareerSelection);
+$("tradeWorkZip").addEventListener("input",debounce(loadSelectedOccupationWage,500));
+$("trainingWorkZip").addEventListener("input",debounce(loadSelectedOccupationWage,500));
+
+const setPathBeforeLocalEconomics=setPath;
+setPath=(path,initial=false)=>{setPathBeforeLocalEconomics(path,initial);const custom=path==="trade"||path==="training";$("providerField").hidden=!custom;selectedLocalWage=null;if(custom&&!initial){$("provider").value="";["tradeStartWage","tradeJourneyWage","tradeToolsCost","tradeClassCost","tradeLicenseCost","trainingTuition","trainingExamCost","trainingMaterials","trainingRenewal","trainingStartingSalary"].forEach(id=>$(id).value="");const source=path==="trade"?$("tradeWageSource"):$("trainingWageSource");source.textContent="Choose a target career and enter a ZIP code."}};
+
+$("addOption").addEventListener("click",event=>{
+  if(!(activePath==="trade"||activePath==="training"))return;
+  const stop=message=>{event.preventDefault();event.stopImmediatePropagation();$("formMessage").textContent=message};
+  if(!$("provider").value.trim())return stop("Enter the exact apprenticeship, school, certification, or training provider name.");
+  const zip=activePath==="trade"?$("tradeWorkZip").value.trim():$("trainingWorkZip").value.trim();
+  if(!/^\d{5}$/.test(zip))return stop("Enter the five-digit ZIP code where you plan to work.");
+  if(activePath==="trade"){
+    if(!Number($("tradeStartWage").value)||!Number($("tradeJourneyWage").value))return stop("Choose a target career and confirm its starting and journey-level wages.");
+    if(["tradeToolsCost","tradeClassCost","tradeLicenseCost"].some(id=>$(id).value===""))return stop("Enter the actual tools, program, and licensing costs. Enter 0 when a cost does not apply.");
+  }else{
+    if(!Number($("trainingStartingSalary").value))return stop("Choose a target career and confirm its expected salary.");
+    if(["trainingTuition","trainingExamCost","trainingMaterials","trainingRenewal"].some(id=>$(id).value===""))return stop("Enter the actual tuition, exam, materials, and renewal costs. Enter 0 when a cost does not apply.");
+  }
+},true);
+
+const calculateBeforeLocalEconomics=calculate;
+calculate=()=>{const option=calculateBeforeLocalEconomics();if(option.path!=="trade"&&option.path!=="training")return option;const workZip=option.path==="trade"?$("tradeWorkZip").value.trim():$("trainingWorkZip").value.trim();option.provider=$("provider").value.trim();option.name=option.provider;option.workZip=workZip;option.localWage=selectedLocalWage?{...selectedLocalWage}:null;option.wageSource=selectedLocalWage?`${selectedLocalWage.source} (${selectedLocalWage.geography})`:"O*NET national wage fallback";const confidence=option.dataConfidence||dataConfidence(option);confidence.entered=[...new Set([...(confidence.entered||[]),"Specific program/provider costs",`Planned work ZIP ${workZip}`])];if(selectedLocalWage){confidence.official=[...new Set([...(confidence.official||[]),`${selectedLocalWage.source} wage data for ${selectedLocalWage.geography}`])];confidence.verify=(confidence.verify||[]).filter(item=>!item.startsWith("BLS wage"))}else confidence.verify=[...new Set([...(confidence.verify||[]),"Replace the national wage fallback with ZIP-level pay when CareerOneStop access is configured"])];option.dataConfidence=confidence;return option};
 render();
 
 const familyWorksheetMarkupBeforeBeta=familyWorksheetMarkup;
