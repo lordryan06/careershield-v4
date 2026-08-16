@@ -1,4 +1,13 @@
-# CareerShield V4.6.3
+# CareerShield V4.6.4
+
+## V4.6.4 searchable consolidated military picker
+
+- Replaces the overconfident entry-level title filter with a transparent initial-career consolidation view.
+- Adds a visible search field that narrows results as the user types a specialty name or military code.
+- Searches the complete selected branch and career-track catalog whenever text is entered, so advanced records remain findable.
+- Groups related proficiency, instructor, qualification, and specialization records into a representative career option by default.
+- Keeps an **Every specialty and qualification record** view for users who need the ungrouped official list.
+- Continues to warn that the official crosswalk does not identify accession eligibility and that availability must be confirmed with a recruiter.
 
 ## V4.6.3 entry-level military and GI Bill clarity
 
