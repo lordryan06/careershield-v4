@@ -1,5 +1,5 @@
 const $ = id => document.getElementById(id);
-const APP_VERSION = "4.5.4";
+const APP_VERSION = "4.5.5";
 const money = value => value == null ? "Not available" : new Intl.NumberFormat("en-US", { style:"currency", currency:"USD", maximumFractionDigits:0 }).format(value);
 const clamp = value => Math.max(0, Math.min(100, Math.round(value)));
 const get = (obj, path) => path.split(".").reduce((v, key) => v?.[key], obj) ?? obj?.[path] ?? null;
@@ -398,8 +398,6 @@ const updateGiBillEstimateBeforeBreakdown=updateGiBillEstimate;
 updateGiBillEstimate=()=>{updateGiBillEstimateBeforeBreakdown();refreshGiBillBreakdown()};
 const militaryInputsBeforeGiBillBreakdown=militaryInputs;
 militaryInputs=()=>{const result=militaryInputsBeforeGiBillBreakdown();result.giBillBreakdown=calculateGiBillBreakdown();return result};
-const cardBeforeGiBillBreakdown=card;
-card=(option,rank)=>{const html=cardBeforeGiBillBreakdown(option,rank),breakdown=option.militaryComp?.giBillBreakdown;if(!breakdown)return html;return html.replace('<div class="metrics">',`<div class="gi-bill-card-breakdown">${giBillBreakdownMarkup(breakdown)}</div><div class="metrics">`)};
 ["serviceCommitment","giBillAnnualTuition","giBillAcademicYears","giBillSchoolType","giBillSchoolZip"].forEach(id=>{const control=$(id);control?.addEventListener("input",refreshGiBillBreakdown);control?.addEventListener("change",refreshGiBillBreakdown)});
 refreshGiBillBreakdown();
 render();
