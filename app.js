@@ -1,5 +1,5 @@
 const $ = id => document.getElementById(id);
-const APP_VERSION = "4.6.5";
+const APP_VERSION = "4.6.6";
 const money = value => value == null ? "Not available" : new Intl.NumberFormat("en-US", { style:"currency", currency:"USD", maximumFractionDigits:0 }).format(value);
 const clamp = value => Math.max(0, Math.min(100, Math.round(value)));
 const get = (obj, path) => path.split(".").reduce((v, key) => v?.[key], obj) ?? obj?.[path] ?? null;
@@ -380,6 +380,12 @@ $("collegeWorkZip").addEventListener("input",debounce(loadCollegeLocalWage,500))
 
 const setPathBeforeEvidenceLayers=setPath;
 setPath=(path,initial=false)=>{setPathBeforeEvidenceLayers(path,initial);$("collegeEvidenceField").hidden=path!=="college";if(path!=="college")selectedCollegeLocalWage=null};
+const setPathBeforeRouteIdentity=setPath;
+function updateRouteIdentity(path=activePath){const training=path==="trade"||path==="training",route=path==="college"?{name:"College",symbol:"🎓",className:"college",detail:"Degree or college program"}:training?{name:"Trades & Training",symbol:"⚙",className:"trade",detail:$("trainingMode").selectedOptions[0]?.textContent||"Apprenticeship or credential"}:{name:"Military",symbol:"★",className:"military",detail:`${$("militaryBranch").selectedOptions[0]?.textContent||"Service branch"} · ${$("militaryTrack").selectedOptions[0]?.textContent||"Career track"}`};const banner=$("activeRouteIdentity");if(!banner)return;banner.className=`active-route-identity ${route.className}`;$("activeRouteSymbol").textContent=route.symbol;$("activeRouteName").textContent=route.name;$("activeRouteDetail").textContent=route.detail}
+setPath=(path,initial=false)=>{setPathBeforeRouteIdentity(path,initial);updateRouteIdentity(path)};
+$("trainingMode").addEventListener("change",()=>updateRouteIdentity(trainingPathForMode()));
+[$("militaryBranch"),$("militaryTrack")].forEach(control=>control.addEventListener("change",()=>updateRouteIdentity("military")));
+updateRouteIdentity(activePath);
 $("collegeEvidenceField").hidden=activePath!=="college";
 function optionalNumber(id){const value=$(id).value.trim();return value===""?null:Number(value)}
 function officialUrl(value){try{const url=new URL(value);return /^https?:$/.test(url.protocol)?url.href:null}catch{return null}}

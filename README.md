@@ -1,4 +1,12 @@
-# CareerShield V4.6.5
+# CareerShield V4.6.6
+
+## V4.6.6 persistent path identity
+
+- Keeps the selected top-level category visible throughout the guided builder.
+- Shows the established category symbol and name for College, Trades & Training, or Military.
+- Displays the selected training subtype beneath Trades & Training.
+- Displays the selected service branch and career track beneath Military.
+- Uses a compact sticky banner so users retain their route context while completing path details and financial inputs.
 
 ## V4.6.5 training-specific career choices
 
