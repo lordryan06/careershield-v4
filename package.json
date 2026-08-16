@@ -1,6 +1,6 @@
 {
   "name": "careershield-v4",
-  "version": "4.5.2",
+  "version": "4.5.3",
   "private": true,
   "type": "module",
   "packageManager": "npm@10.8.2",

@@ -1,5 +1,5 @@
 const $ = id => document.getElementById(id);
-const APP_VERSION = "4.5.2";
+const APP_VERSION = "4.5.3";
 const money = value => value == null ? "Not available" : new Intl.NumberFormat("en-US", { style:"currency", currency:"USD", maximumFractionDigits:0 }).format(value);
 const clamp = value => Math.max(0, Math.min(100, Math.round(value)));
 const get = (obj, path) => path.split(".").reduce((v, key) => v?.[key], obj) ?? obj?.[path] ?? null;
@@ -388,4 +388,18 @@ familyWorksheetMarkup=ranked=>familyWorksheetMarkupBeforeBeta(ranked).replace("D
 const downloadFamilyWorksheetBeforeBeta=downloadFamilyWorksheet;
 downloadFamilyWorksheet=async ranked=>{const originalFillText=CanvasRenderingContext2D.prototype.fillText;CanvasRenderingContext2D.prototype.fillText=function(text,...args){const updated=typeof text==="string"?text.replace("Deep Analysis: $9.99.","Deep Analysis beta: temporarily free."):text;return originalFillText.call(this,updated,...args)};try{await downloadFamilyWorksheetBeforeBeta(ranked)}finally{CanvasRenderingContext2D.prototype.fillText=originalFillText}};
 downloadFreeComparisonSummary=downloadFamilyWorksheet;
+render();
+
+// V4.5.3: transparent Post-9/11 GI Bill calculation.
+function calculateGiBillBreakdown(){const months=Number($("serviceCommitment").value||0),tier=giBillEligibility(months),type=$("giBillSchoolType").value,years=Number($("giBillAcademicYears").value||0),enteredTuition=Number($("giBillAnnualTuition").value||0);let annualTuition=enteredTuition;if(type==="private"||type==="technical")annualTuition=Math.min(enteredTuition,GI_BILL_PRIVATE_ANNUAL_CAP);const monthlyHousing=type==="online"?GI_BILL_ONLINE_MHA_CAP:Number($("giBillMonthlyHousing").value||0),tuition=annualTuition*years*tier,housing=monthlyHousing*9*years*tier,books=GI_BILL_BOOKS_ANNUAL_CAP*years*tier,total=Math.round(tuition+housing+books);return{serviceMonths:months,eligibilityTier:tier,schoolType:type,academicYears:years,enteredAnnualTuition:enteredTuition,coveredAnnualTuition:annualTuition,tuitionCapApplied:annualTuition<enteredTuition,monthlyHousing,housingMonthsPerYear:9,annualBooksCap:GI_BILL_BOOKS_ANNUAL_CAP,tuition,housing,books,total,rateEffective:"August 1, 2026"}}
+function giBillBreakdownMarkup(breakdown){if(!breakdown?.eligibilityTier)return`<strong>How this estimate is calculated</strong><p>No value is included until the service commitment reaches an estimated VA eligibility tier.</p>`;const percent=Math.round(breakdown.eligibilityTier*100),capNote=breakdown.tuitionCapApplied?`<small>Annual tuition was limited to the VA cap of ${money(breakdown.coveredAnnualTuition)}.</small>`:"";return`<strong>How CareerShield calculated ${money(breakdown.total)}</strong><div><span>Tuition</span><b>${money(breakdown.coveredAnnualTuition)} × ${breakdown.academicYears} years × ${percent}% = ${money(breakdown.tuition)}</b></div><div><span>Housing</span><b>${money(breakdown.monthlyHousing)} × ${breakdown.housingMonthsPerYear} months × ${breakdown.academicYears} years × ${percent}% = ${money(breakdown.housing)}</b></div><div><span>Books</span><b>${money(breakdown.annualBooksCap)} × ${breakdown.academicYears} years × ${percent}% = ${money(breakdown.books)}</b></div><div class="gi-bill-total"><span>Estimated total</span><b>${money(breakdown.tuition)} + ${money(breakdown.housing)} + ${money(breakdown.books)} = ${money(breakdown.total)}</b></div>${capNote}<small>Uses up to 36 housing-payment months across four academic years. Actual VA eligibility, enrollment, tuition payment, and housing allowance must be confirmed.</small>`}
+function refreshGiBillBreakdown(){const target=$("giBillBreakdown");if(target)target.innerHTML=giBillBreakdownMarkup(calculateGiBillBreakdown())}
+const updateGiBillEstimateBeforeBreakdown=updateGiBillEstimate;
+updateGiBillEstimate=()=>{updateGiBillEstimateBeforeBreakdown();refreshGiBillBreakdown()};
+const militaryInputsBeforeGiBillBreakdown=militaryInputs;
+militaryInputs=()=>{const result=militaryInputsBeforeGiBillBreakdown();result.giBillBreakdown=calculateGiBillBreakdown();return result};
+const cardBeforeGiBillBreakdown=card;
+card=(option,rank)=>{const html=cardBeforeGiBillBreakdown(option,rank),breakdown=option.militaryComp?.giBillBreakdown;if(!breakdown)return html;return html.replace('<div class="metrics">',`<div class="gi-bill-card-breakdown">${giBillBreakdownMarkup(breakdown)}</div><div class="metrics">`)};
+["serviceCommitment","giBillAnnualTuition","giBillAcademicYears","giBillSchoolType","giBillSchoolZip"].forEach(id=>{const control=$(id);control?.addEventListener("input",refreshGiBillBreakdown);control?.addEventListener("change",refreshGiBillBreakdown)});
+refreshGiBillBreakdown();
 render();
