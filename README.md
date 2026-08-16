@@ -1,4 +1,13 @@
-# CareerShield V4.6.4
+# CareerShield V4.6.5
+
+## V4.6.5 training-specific career choices
+
+- Removes the military **Search specialty name or code** field while retaining the consolidated specialty dropdown.
+- Gives every trades and training subtype its own target-career filter instead of showing the entire O*NET catalog.
+- Separates paid apprenticeships, skilled-trade schools, industry certifications, technical certificates, license preparation, and bootcamps as distinct selections.
+- Limits target careers to occupations reasonably connected to the selected training route.
+- Removes management, supervisory, doctoral, professional-practice, and other clearly advanced occupations from these dropdowns.
+- Reminds users to verify that the exact program actually prepares graduates for the selected occupation.
 
 ## V4.6.4 searchable consolidated military picker
 
