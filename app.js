@@ -1,5 +1,5 @@
 const $ = id => document.getElementById(id);
-const APP_VERSION = "4.6.7";
+const APP_VERSION = "4.6.8";
 const money = value => value == null ? "Not available" : new Intl.NumberFormat("en-US", { style:"currency", currency:"USD", maximumFractionDigits:0 }).format(value);
 const clamp = value => Math.max(0, Math.min(100, Math.round(value)));
 const get = (obj, path) => path.split(".").reduce((v, key) => v?.[key], obj) ?? obj?.[path] ?? null;
@@ -424,4 +424,10 @@ render();
 // V4.5.6: explain the GI Bill value on hover, focus, or tap in the decision plan.
 const renderPlanBeforeGiBillBreakdown=renderPlan;
 renderPlan=ranked=>{renderPlanBeforeGiBillBreakdown(ranked);const military=ranked[0]?.militaryComp,panel=document.querySelector(".print-benefit"),amount=panel?.querySelector(":scope > strong");if(!military||!panel||!amount)return;const savedTotal=Math.round(Number(military.educationExpected||military.education||0)),current=calculateGiBillBreakdown(),breakdown=military.giBillBreakdown||(current.total===savedTotal?current:null);panel.classList.add("has-gi-bill-tooltip");const trigger=document.createElement("button");trigger.className="gi-bill-hover-trigger";trigger.type="button";trigger.setAttribute("aria-label","Show how the estimated Post-9/11 GI Bill value was calculated");trigger.setAttribute("aria-describedby","giBillDecisionBreakdown");trigger.title="Hover or select to see the calculation";trigger.textContent="See calculation · i";amount.appendChild(trigger);const detail=document.createElement("div");detail.id="giBillDecisionBreakdown";detail.className="gi-bill-hover-breakdown";detail.setAttribute("role","tooltip");detail.innerHTML=breakdown?giBillBreakdownMarkup(breakdown):`<strong>Detailed calculation was not stored with this earlier saved path</strong><p>The saved estimate is ${money(savedTotal)}. Remove and rebuild this military path once so CareerShield can retain its tuition, housing, books, academic years, and eligibility inputs.</p>`;panel.appendChild(detail)};
+
+// V4.6.8 keeps the worksheet useful for print without interrupting on-screen results.
+const fullFamilyWorksheetMarkup=familyWorksheetMarkup;
+familyWorksheetMarkup=ranked=>`<div class="family-review-package"><section class="family-review-screen"><div><span>REVIEW THIS DECISION WITH YOUR FAMILY</span><h3>Turn the comparison into three next steps.</h3><p>Check the leading path, identify the biggest unverified assumption, and decide who will verify it before anyone commits.</p></div><div class="family-review-actions"><button id="printFamilyReview" class="secondary" type="button">Print family review</button><button id="familyDeepAnalysisScreen" class="primary" type="button">Run Deep Analysis</button></div></section>${fullFamilyWorksheetMarkup(ranked).replace('class="family-worksheet"','class="family-worksheet family-review-print"')}</div>`;
+const renderPlanBeforeCompactFamilyReview=renderPlan;
+renderPlan=ranked=>{renderPlanBeforeCompactFamilyReview(ranked);const section=$("planSection");section?.querySelector("#printFamilyReview")?.addEventListener("click",()=>window.print());section?.querySelector("#familyDeepAnalysisScreen")?.addEventListener("click",()=>($("generateDeepAnalysis")||$("buyDeepAnalysis"))?.click());const oldPrint=section?.querySelector(":scope > #printPlan");if(oldPrint)oldPrint.hidden=true};
 render();

@@ -1,4 +1,12 @@
-# CareerShield V4.6.7
+# CareerShield V4.6.8
+
+## V4.6.8 purposeful family-review handoff
+
+- Replaces the oversized on-screen family worksheet with a compact action card.
+- Gives users two clear actions: **Print family review** or **Run Deep Analysis**.
+- Keeps the full writable worksheet available in the printed or saved family plan.
+- Focuses the on-screen prompt on three actions: check the leader, identify the biggest unverified assumption, and assign someone to verify it.
+- Removes the duplicate standalone print button after the compact family-review actions are rendered.
 
 ## V4.6.7 streamlined Partner Review proof
 
