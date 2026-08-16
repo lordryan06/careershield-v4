@@ -1,4 +1,11 @@
-# CareerShield V4.4.2
+# CareerShield V4.4.3
+
+## V4.4.3 take-home QR deployment fix
+
+- Moves QR creation, shared-comparison storage, and family reopening into the established `/api/plans` Netlify function.
+- Removes the two new standalone function routes that could be missed during an incremental GitHub update.
+- Shows a specific deployment or HTTP error when CareerShield does not receive a valid service response.
+- Preserves the existing authenticated account-plan synchronization behavior.
 
 ## V4.4.2 counselor-to-family handoff
 
