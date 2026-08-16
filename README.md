@@ -1,4 +1,13 @@
-# CareerShield V4.4.10
+# CareerShield V4.4.11
+
+## V4.4.11 score-based report ranking
+
+- Sorts Deep Analysis paths by CareerShield score from highest to lowest before assigning ranks.
+- Uses 10-year position only as the tie-breaker when two scores match.
+- Adds a deterministic ranked overview that is rendered from CareerShield data, not AI prose.
+- Displays every path in its own overview card with score, 10-year position, debt, strongest factor, and weakest factor.
+- Requires an individual narrative subsection for every compared path with why it ranks there, its strongest factor, biggest risk, and next verification step.
+- Regenerates earlier cached analyses using the corrected format and ranking.
 
 ## V4.4.10 clearer Deep Analysis
 

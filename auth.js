@@ -48,6 +48,11 @@ function safe(value = "") {
 
 const deepAnalysisHeadings = ["Executive Takeaway","The 3 Things That Matter Most","Path-by-Path Decision Summary","Expected Scenario","Best-Case Scenario","Downside Scenario","Break-Even Points","What Could Reverse the Ranking","Red Flags and Material Assumptions","Questions to Ask","Next 7 Actions","Data Confidence"];
 function analysisInline(value) { return safe(value).replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>"); }
+function analysisMoney(value) { return new Intl.NumberFormat("en-US", { style: "currency", currency: "USD", maximumFractionDigits: 0 }).format(Number(value || 0)); }
+function formatPathRanking(snapshot = []) {
+  const paths = [...snapshot].sort((a, b) => Number(b.score || 0) - Number(a.score || 0) || Number(b.tenYearNet || 0) - Number(a.tenYearNet || 0));
+  return `<section class="analysis-ranking"><div><span>RANKED BY CAREERSHIELD SCORE</span><h4>Your paths from strongest to weakest</h4><p>10-year position breaks a tie. This order is not based on when paths were entered.</p></div><div class="analysis-path-grid">${paths.map((path, index) => { const factors = Object.entries(path.factors || {}).sort((a, b) => b[1] - a[1]), strongest = factors[0]?.[0] || "Not available", weakest = factors.at(-1)?.[0] || "Not available"; return `<article><b>RANK ${index + 1}</b><h5>${safe(path.program || path.provider || path.path || "Career path")}</h5><small>${safe(path.career?.name || path.path || "")}</small><strong>${Number(path.score || 0)}/100</strong><dl><div><dt>10-year position</dt><dd>${analysisMoney(path.tenYearNet)}</dd></div><div><dt>Expected debt</dt><dd>${analysisMoney(path.inputs?.debt)}</dd></div><div><dt>Strongest</dt><dd>${safe(strongest)}</dd></div><div><dt>Watch</dt><dd>${safe(weakest)}</dd></div></dl></article>`; }).join("")}</div></section>`;
+}
 function formatDeepAnalysis(value) {
   const lookup = new Map(deepAnalysisHeadings.map((heading, index) => [heading.toLowerCase(), { heading, index }]));
   const sections = []; let current = { heading: "Deep Analysis", index: -1, lines: [] };
@@ -58,7 +63,7 @@ function formatDeepAnalysis(value) {
   });
   if (current.lines.length) sections.push(current);
   return sections.map(section => {
-    const items = section.lines.map(line => { const list = line.match(/^(?:[-*•]|\d+[.)])\s+(.+)$/); return list ? `<li>${analysisInline(list[1])}</li>` : `<p>${analysisInline(line)}</p>`; }).join("");
+    const items = section.lines.map(line => { const subheading = line.match(/^###\s+(.+)$/), list = line.match(/^(?:[-*•]|\d+[.)])\s+(.+)$/); return subheading ? `<h5>${analysisInline(subheading[1])}</h5>` : list ? `<li>${analysisInline(list[1])}</li>` : `<p>${analysisInline(line)}</p>`; }).join("");
     const priority = section.index === 0 ? " priority" : section.index === 1 ? " key-points" : "";
     return `<section class="analysis-section${priority}"><span>${section.index >= 0 ? String(section.index + 1).padStart(2, "0") : ""}</span><h4>${safe(section.heading)}</h4><div>${items}</div></section>`;
   }).join("");
@@ -296,7 +301,7 @@ byId("generateDeepAnalysis").addEventListener("click", async () => {
     const data = await response.json().catch(() => ({}));
     if (response.status === 202) { content.textContent = data.message || "Your analysis is being prepared. Try again shortly."; return; }
     if (!response.ok || !data.analysis?.content) throw new Error(data.error || "Deep Analysis could not be opened.");
-    content.innerHTML = formatDeepAnalysis(data.analysis.content);
+    content.innerHTML = formatPathRanking(data.analysis.planSnapshot) + formatDeepAnalysis(data.analysis.content);
     button.textContent = "Open Deep Analysis";
   } catch (error) {
     content.textContent = error.message;
