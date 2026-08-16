@@ -1,5 +1,5 @@
 const $ = id => document.getElementById(id);
-const APP_VERSION = "4.4.13";
+const APP_VERSION = "4.4.14";
 const money = value => value == null ? "Not available" : new Intl.NumberFormat("en-US", { style:"currency", currency:"USD", maximumFractionDigits:0 }).format(value);
 const clamp = value => Math.max(0, Math.min(100, Math.round(value)));
 const get = (obj, path) => path.split(".").reduce((v, key) => v?.[key], obj) ?? obj?.[path] ?? null;
@@ -342,15 +342,13 @@ $("addOption").addEventListener("click",event=>{
   if(!/^\d{5}$/.test(zip))return stop("Enter the five-digit ZIP code where you plan to work.");
   if(activePath==="trade"){
     if(!Number($("tradeStartWage").value)||!Number($("tradeJourneyWage").value))return stop("Choose a target career and confirm its starting and journey-level wages.");
-    if(["tradeToolsCost","tradeClassCost","tradeLicenseCost"].some(id=>$(id).value===""))return stop("Enter the actual tools, program, and licensing costs. Enter 0 when a cost does not apply.");
   }else{
     if(!Number($("trainingStartingSalary").value))return stop("Choose a target career and confirm its expected salary.");
-    if(["trainingTuition","trainingExamCost","trainingMaterials","trainingRenewal"].some(id=>$(id).value===""))return stop("Enter the actual tuition, exam, materials, and renewal costs. Enter 0 when a cost does not apply.");
   }
 },true);
 
 const calculateBeforeLocalEconomics=calculate;
-calculate=()=>{const option=calculateBeforeLocalEconomics();if(option.path!=="trade"&&option.path!=="training")return option;const workZip=option.path==="trade"?$("tradeWorkZip").value.trim():$("trainingWorkZip").value.trim(),provider=$("provider").value.trim();option.provider=provider||null;option.name=provider||selectedCareer?.name||option.pathLabel;option.workZip=workZip;option.localWage=selectedLocalWage?{...selectedLocalWage}:null;option.wageSource=selectedLocalWage?`${selectedLocalWage.source} (${selectedLocalWage.geography})`:"O*NET national wage fallback";const confidence=option.dataConfidence||dataConfidence(option);confidence.entered=[...new Set([...(confidence.entered||[]),"Specific program costs",`Planned work ZIP ${workZip}`])];if(!provider)confidence.verify=[...new Set([...(confidence.verify||[]),"Add and verify the exact provider before enrolling or purchasing training"])];if(selectedLocalWage){confidence.official=[...new Set([...(confidence.official||[]),`${selectedLocalWage.source} wage data for ${selectedLocalWage.geography}`])];confidence.verify=(confidence.verify||[]).filter(item=>!item.startsWith("BLS wage"))}else confidence.verify=[...new Set([...(confidence.verify||[]),"Replace the national wage fallback with ZIP-level pay when CareerOneStop access is configured"])];option.dataConfidence=confidence;return option};
+calculate=()=>{const option=calculateBeforeLocalEconomics();if(option.path!=="trade"&&option.path!=="training")return option;const workZip=option.path==="trade"?$("tradeWorkZip").value.trim():$("trainingWorkZip").value.trim(),provider=$("provider").value.trim(),costFields=option.path==="trade"?["tradeToolsCost","tradeClassCost","tradeLicenseCost"]:["trainingTuition","trainingExamCost","trainingMaterials","trainingRenewal"],missingCosts=costFields.filter(id=>$(id).value==="").map(id=>$(id).closest(".field")?.querySelector("label")?.textContent.trim()).filter(Boolean);option.provider=provider||null;option.name=provider||selectedCareer?.name||option.pathLabel;option.workZip=workZip;option.localWage=selectedLocalWage?{...selectedLocalWage}:null;option.wageSource=selectedLocalWage?`${selectedLocalWage.source} (${selectedLocalWage.geography})`:"O*NET national wage fallback";option.missingCostInputs=missingCosts;const confidence=option.dataConfidence||dataConfidence(option);confidence.entered=[...new Set([...(confidence.entered||[]),"Entered program costs",`Planned work ZIP ${workZip}`])];if(!provider)confidence.verify=[...new Set([...(confidence.verify||[]),"Add and verify the exact provider before enrolling or purchasing training"])];if(missingCosts.length)confidence.verify=[...new Set([...(confidence.verify||[]),`Confirm costs currently treated as $0: ${missingCosts.join(", ")}`])];if(selectedLocalWage){confidence.official=[...new Set([...(confidence.official||[]),`${selectedLocalWage.source} wage data for ${selectedLocalWage.geography}`])];confidence.verify=(confidence.verify||[]).filter(item=>!item.startsWith("BLS wage"))}else confidence.verify=[...new Set([...(confidence.verify||[]),"Replace the national wage fallback with ZIP-level pay when CareerOneStop access is configured"])];option.dataConfidence=confidence;return option};
 render();
 
 const familyWorksheetMarkupBeforeBeta=familyWorksheetMarkup;
