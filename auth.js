@@ -121,6 +121,10 @@ async function syncPlans(plans = window.CareerShieldPlans?.get?.() || []) {
 
 async function loadAccountPlans() {
   if (!currentUser || !window.CareerShieldPlans) return;
+  if (window.CareerShieldFamilyReview) {
+    storageStatus("Family comparison loaded. It will sync to your account when you continue to checkout.");
+    return;
+  }
   storageStatus("Loading your saved comparisons…");
   try {
     const cloud = await plansRequest();
