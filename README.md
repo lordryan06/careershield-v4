@@ -204,6 +204,10 @@ CareerShield V4 is a Netlify-ready decision tool for comparing up to four mixed 
 - Users must name the exact apprenticeship, school, certification, or training provider and enter its actual cost components. Zero is allowed, but blank cost assumptions cannot be scored.
 - Saved comparisons retain the provider, work ZIP, wage source, and returned local wage record for comparison, sync, Data Confidence, Deep Analysis, and reports.
 
+### V4.4.13 scoring correction
+
+- The apprenticeship, school, certification, or training-provider name is optional again. When omitted, the saved path uses the selected O*NET occupation name and Data Confidence reminds the user to verify the exact provider before enrolling.
+
 The production brand assets are `careershield-logo.png` for the horizontal navigation lockup and `careershield-icon.png` for the browser icon.
 
 `legal.html` contains the paid-beta Privacy Notice, Terms of Use, personalized-report Refund Policy, and AI Guide disclosure. These are operational drafts, not a substitute for review by a qualified attorney before broad commercial launch.
