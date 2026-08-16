@@ -2,7 +2,7 @@ import { getStore } from "@netlify/blobs";
 import { getUser, verifyRequestOrigin } from "@netlify/identity";
 
 const json = (data, status = 200) => new Response(JSON.stringify(data), { status, headers: { "content-type": "application/json; charset=utf-8", "cache-control": "no-store" } });
-const SYSTEM = `You produce a concise CareerShield Deep Analysis beta preview for a student and parent. Analyze only the supplied comparison and evidence. Never invent facts, treat a possible source match as verification, or guarantee an outcome. Clearly label official data, user-entered values, CareerShield estimates, and verification gaps. Use plain language and USD.
+const SYSTEM = `You produce a concise CareerShield Deep Analysis beta preview for a student and parent. Analyze only the supplied comparison and evidence. Never invent facts, treat a possible source match as verification, or guarantee an outcome. Clearly label official data, school-reported data, user-entered values, CareerShield estimates, and verification gaps. Use plain language and USD. Use geographic wage P25 as downside, median as expected, and P75 as upside when supplied. AI exposure means tasks may be affected, not that a job will be eliminated. Never call a school-reported career outcomes rate a placement rate.
 
 Produce these headings exactly and in this order:
 Executive Takeaway
@@ -36,7 +36,9 @@ export default async request => {
       inputs: plan.inputs, fiveYearNet: plan.fiveYearNet, tenYearNet: plan.tenYearNet,
       timeline: plan.timeline, military: plan.militaryComp || null, apprenticeship: plan.tradeComp || null,
       training: plan.trainingComp || null, dataConfidence: plan.dataConfidence || null,
-      officialProgramUrl: plan.officialProgramUrl || null, liveEvidence: plan.liveEvidence || null
+      officialProgramUrl: plan.officialProgramUrl || null, liveEvidence: plan.liveEvidence || null,
+      workZip: plan.workZip || null, geographicWages: plan.localWage || null,
+      aiResilienceModel: plan.aiResilienceModel || null, firstDestination: plan.firstDestination || null
     }));
     const fingerprint = JSON.stringify(snapshot.map(item => [item.provider, item.program, item.score, item.tenYearNet, item.dataConfidence?.score]));
     const previewStore = getStore({ name: "careershield-deep-analysis-previews", consistency: "strong" });

@@ -196,6 +196,15 @@ The Open Graph image remains root-relative until the final branded production do
 
 CareerShield V4 is a Netlify-ready decision tool for comparing up to four mixed career paths: college, skilled trades and apprenticeships, certifications and technical training, and military service.
 
+## V4.5.0 evidence layers
+
+- Geographic wage records now retain occupation code, work ZIP, geography and area code, data year, P10, P25, median, P75, P90, mean when returned, source URL, and retrieval date. CareerShield uses the geographic median for the expected case and preserves P25/P75 for downside and upside analysis. The lookup falls back from local to state to national through CareerOneStop/BLS data.
+- CareerShield AI Resilience Model v1.0 replaces the standalone text heuristic with a documented composite: 35% O*NET task composition, 25% published occupational LLM-exposure evidence, 20% physical/on-site requirements, 10% human interaction and judgment, and 10% licensing/regulatory/safety moat.
+- The AI model uses OpenAI/UPenn's published occupation-level `dv_rating_beta` exposure measure where the O*NET-SOC code matches. Exposure is explicitly described as task impact potential—not job-elimination probability. See `AI-EXPOSURE-DATA-NOTICE.md`.
+- College paths can capture an official school first-destination or career-outcomes source, graduation year, program, knowledge rate, career outcomes rate, employed rate, continuing-education rate, and starting salary. These figures are labeled school-reported and are retained only when an official-source URL is supplied.
+- CareerShield does not rename an unexplained placement rate as a career outcomes rate, and unavailable first-destination fields remain unavailable rather than being estimated.
+- Geographic wages, AI-model components/version, and first-destination evidence flow into saved comparisons, Data Confidence, the printable plan, Deep Analysis, and report snapshots.
+
 ## V4.4.12 trade and certification economics
 
 - Trade and certification pay now changes with the selected O*NET occupation instead of reusing one fixed default.

@@ -3,7 +3,9 @@ const json = (data, status = 200) => new Response(JSON.stringify(data), {
   headers: { "content-type": "application/json; charset=utf-8", "cache-control": "public, max-age=86400" }
 });
 const number = value => {
-  const parsed = Number(String(value ?? "").replace(/[^0-9.-]/g, ""));
+  const cleaned = String(value ?? "").replace(/[^0-9.-]/g, "");
+  if (!cleaned) return null;
+  const parsed = Number(cleaned);
   return Number.isFinite(parsed) ? parsed : null;
 };
 const list = value => Array.isArray(value) ? value : value ? [value] : [];
@@ -31,7 +33,7 @@ export default async request => {
     if (!chosen) return json({ error: "No wage record was returned for this occupation and ZIP code." }, 404);
     const multiplier = /hour/i.test(chosen.RateType || chosen.rateType || "Annual") ? 2080 : 1;
     const amount = key => { const parsed = number(chosen[key] ?? chosen[key[0].toLowerCase() + key.slice(1)]); return parsed == null ? null : Math.round(parsed * multiplier); };
-    return json({ occupationCode: code, zip, geography: chosen.AreaName || chosen.areaName || (local ? `Area containing ${zip}` : state ? "State" : "United States"), geographyLevel: local ? "local" : state ? "state" : "national", annual: { low: amount("Pct10"), starting: amount("Pct25"), median: amount("Median"), high: amount("Pct75") }, source: "CareerOneStop / BLS OEWS", retrievedAt: new Date().toISOString() });
+    return json({ occupationCode: code, zip, geography: chosen.AreaName || chosen.areaName || (local ? `Area containing ${zip}` : state ? "State" : "United States"), geographyLevel: local ? "local" : state ? "state" : "national", areaCode: chosen.Area || chosen.area || null, dataYear: wages.WageYear || wages.wageYear || null, annual: { p10: amount("Pct10"), p25: amount("Pct25"), median: amount("Median"), p75: amount("Pct75"), p90: amount("Pct90"), mean: amount("Mean") }, source: "CareerOneStop / BLS OEWS", sourceUrl: "https://www.bls.gov/oes/", retrievedAt: new Date().toISOString() });
   } catch {
     return json({ error: "CareerOneStop local wage data is temporarily unavailable." }, 502);
   }
